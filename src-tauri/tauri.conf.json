@@ -12,9 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "opencore-tauriots",
-        "width": 800,
-        "height": 600
+        "label": "main",
+        "title": "OpenCore",
+        "width": 960,
+        "height": 740,
+        "center": true,
+        "theme": "Dark"
       }
     ],
     "security": {
