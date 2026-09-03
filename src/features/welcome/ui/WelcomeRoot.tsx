@@ -1,12 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  isHeroTransitionActive,
-  linearProgress,
-  shellBrandOpacity,
-  startHeroTransition,
-  welcomeContentOpacity,
-  type HeroTransitionState,
-} from "../domain/heroTransition";
 import { reduceWelcome } from "../domain/welcomeReducer";
 import { applyThemeToDocument } from "../domain/welcomeTheme";
 import {
@@ -21,7 +13,6 @@ import {
 } from "../infrastructure/welcomeWindowController";
 import { WelcomeProvider, useWelcome } from "../state/welcomeContext";
 import { DevResetFab } from "./DevResetFab";
-import { HeroTransitionOverlay } from "./HeroTransitionOverlay";
 import { HomePlaceholder } from "./HomePlaceholder";
 import { WelcomeScreen } from "./WelcomeScreen";
 
@@ -36,28 +27,8 @@ function WelcomeApp() {
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>(() =>
     bootScreen(preferences),
   );
-  const [heroTransition, setHeroTransition] =
-    useState<HeroTransitionState | null>(null);
-  const [transitionNow, setTransitionNow] = useState(() => performance.now());
 
-  useEffect(() => {
-    if (!heroTransition) return;
-    let frame = 0;
-    const tick = () => {
-      const now = performance.now();
-      setTransitionNow(now);
-      if (isHeroTransitionActive(heroTransition, now)) {
-        frame = window.requestAnimationFrame(tick);
-      } else {
-        setHeroTransition(null);
-        setActiveScreen("home");
-      }
-    };
-    frame = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(frame);
-  }, [heroTransition]);
-
-  const beginHeroTransition = useCallback(async () => {
+  const completeWelcome = useCallback(async () => {
     const updated: AppPreferences = {
       ...preferences,
       onboarding_completed: true,
@@ -66,7 +37,7 @@ function WelcomeApp() {
       await savePreferences(updated);
       setPreferences(updated);
       await applyHomeWindowSize();
-      setHeroTransition(startHeroTransition(performance.now()));
+      setActiveScreen("home");
     } catch (error) {
       console.error("persist welcome completion", error);
     }
@@ -75,52 +46,24 @@ function WelcomeApp() {
   const handleEnter = useCallback(() => {
     const outcome = reduceWelcome({ type: "enter_pressed" });
     if (outcome === "completed") {
-      beginHeroTransition();
+      completeWelcome();
     }
-  }, [beginHeroTransition]);
+  }, [completeWelcome]);
 
   const handleReset = useCallback(async () => {
     const defaults = await resetAllPersistedData();
     setPreferences(defaults);
-    setHeroTransition(null);
     setActiveScreen("welcome");
     await applyWelcomeWindowSize();
   }, [setPreferences]);
 
-  const transitionProgress = heroTransition
-    ? linearProgress(heroTransition, transitionNow)
-    : 0;
-  const welcomeOpacity = heroTransition
-    ? welcomeContentOpacity(transitionProgress)
-    : 1;
-  const shellOpacity = heroTransition
-    ? shellBrandOpacity(transitionProgress)
-    : 1;
-
-  if (activeScreen === "home" && !heroTransition) {
-    return (
-      <div className="welcome-root">
-        <HomePlaceholder mode={themeMode} />
-        {import.meta.env.DEV ? (
-          <DevResetFab mode={themeMode} onReset={handleReset} />
-        ) : null}
-      </div>
-    );
-  }
-
   return (
     <div className="welcome-root">
-      {activeScreen === "home" && heroTransition ? (
-        <HomePlaceholder mode={themeMode} brandOpacity={shellOpacity} />
-      ) : null}
-      <WelcomeScreen contentOpacity={welcomeOpacity} onEnter={handleEnter} />
-      {heroTransition ? (
-        <HeroTransitionOverlay
-          transition={heroTransition}
-          now={transitionNow}
-          mode={themeMode}
-        />
-      ) : null}
+      {activeScreen === "home" ? (
+        <HomePlaceholder />
+      ) : (
+        <WelcomeScreen onEnter={handleEnter} />
+      )}
       {import.meta.env.DEV ? (
         <DevResetFab mode={themeMode} onReset={handleReset} />
       ) : null}
