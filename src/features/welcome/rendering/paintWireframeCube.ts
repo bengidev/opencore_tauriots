@@ -76,8 +76,8 @@ export function paintWireframeCube(
   options: PaintWireframeCubeOptions,
 ): void {
   const { construction, orientation, rotationProgress, ink } = options;
-  const compact = Math.min(width, height) <= 28;
-  const docked = Math.min(width, height) <= 18;
+  const compact = Math.min(width, height) <= 32;
+  const docked = Math.min(width, height) <= 20;
   const canvasPadding = docked
     ? 1
     : compact
