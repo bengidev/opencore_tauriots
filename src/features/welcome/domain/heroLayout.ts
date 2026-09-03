@@ -12,11 +12,14 @@ export interface WindowViewport {
 
 export const BRAND_HERO_MIN = 220;
 export const BRAND_HERO_MAX = 320;
-export const BRAND_SHELL_HEIGHT = 18;
-export const TITLE_BAR_HEIGHT = 38;
 
 const WELCOME_EDGE_INSET_H = 16;
-const WELCOME_HEADER_BAND = 46;
+/** Vertical gap below macOS traffic lights before welcome header content. */
+export const MAC_BRAND_GAP_AFTER_TRAFFIC = 20;
+/** macOS traffic-light origin Y — keep in sync with tauri.conf.json trafficLightPosition.y */
+const MAC_TRAFFIC_LIGHT_ORIGIN_Y = 16;
+/** Height of the three traffic-light buttons. */
+const MAC_TRAFFIC_LIGHT_CLUSTER_HEIGHT = 12;
 /** Footer row (enter button + padding + border). */
 const WELCOME_FOOTER_BAND = 96;
 /** Headline, body copy, and gaps below the hero cube. */
@@ -26,14 +29,28 @@ const WELCOME_ACTION_BAND = WELCOME_FOOTER_BAND + WELCOME_COPY_BAND;
 export function cubeHeroCanvasSize(heroSize: number): number {
   return heroSize + CUBE_HERO_EDGE_INSET * 2;
 }
-const SHELL_TOGGLE_WIDTH = 28;
-const SHELL_TITLE_GAP = 4;
 
-export function titleBarLeftPadding(): number {
-  const isMac =
+function isMacPlatform(): boolean {
+  return (
     typeof navigator !== "undefined" &&
-    /Mac/i.test(navigator.platform || navigator.userAgent);
-  return isMac ? 80 : 12;
+    /Mac/i.test(navigator.platform || navigator.userAgent)
+  );
+}
+
+export function isMacOverlayTitleBar(): boolean {
+  return isMacPlatform();
+}
+
+/** Y coordinate of the bottom edge of the traffic-light cluster. */
+export function macTrafficLightsBottom(): number {
+  if (!isMacPlatform()) return 0;
+  return MAC_TRAFFIC_LIGHT_ORIGIN_Y + MAC_TRAFFIC_LIGHT_CLUSTER_HEIGHT;
+}
+
+/** Top inset for welcome content that sits below the traffic lights + gap. */
+export function macOverlayContentTopInset(): number {
+  if (!isMacPlatform()) return 0;
+  return macTrafficLightsBottom() + MAC_BRAND_GAP_AFTER_TRAFFIC;
 }
 
 export function brandWidth(height: number): number {
@@ -60,53 +77,11 @@ export function responsiveCubeHeroSize(viewport: WindowViewport): number {
   return responsiveHeroSize(viewport.width, viewport.height);
 }
 
-export function welcomeCubeCenter(viewport: WindowViewport): [number, number] {
-  const heroSize = responsiveCubeHeroSize(viewport);
-  const contentTop = WELCOME_HEADER_BAND;
-  const contentHeight = Math.max(
-    viewport.height - contentTop - WELCOME_ACTION_BAND,
-    heroSize,
-  );
-  const centerY = contentTop + contentHeight * 0.5;
-  return [viewport.width * 0.5, centerY];
-}
-
-export function dockedCubeCenter(viewport: WindowViewport): [number, number] {
-  const x =
-    titleBarLeftPadding() +
-    SHELL_TOGGLE_WIDTH +
-    SHELL_TITLE_GAP +
-    BRAND_SHELL_HEIGHT * 0.5;
-  const y = TITLE_BAR_HEIGHT * 0.5;
-  void viewport;
-  return [x, y];
-}
-
 export function responsiveBrandHeight(viewport: WindowViewport): number {
   const squareLimit = responsiveHeroSize(viewport.width, viewport.height);
   const widthLimit =
     (viewport.width - WELCOME_EDGE_INSET_H * 2) / BRAND_ASPECT;
   return Math.min(squareLimit, widthLimit, BRAND_HERO_MAX / BRAND_ASPECT);
-}
-
-export function welcomeBrandCenter(viewport: WindowViewport): [number, number] {
-  const heroHeight = responsiveBrandHeight(viewport);
-  const contentTop = WELCOME_HEADER_BAND;
-  const contentHeight = Math.max(
-    viewport.height - contentTop - WELCOME_ACTION_BAND,
-    heroHeight,
-  );
-  const centerY = contentTop + contentHeight * 0.5;
-  return [viewport.width * 0.5, centerY];
-}
-
-export function dockedBrandCenter(viewport: WindowViewport): [number, number] {
-  const width = brandWidth(BRAND_SHELL_HEIGHT);
-  const x =
-    titleBarLeftPadding() + SHELL_TOGGLE_WIDTH + SHELL_TITLE_GAP + width * 0.5;
-  const y = TITLE_BAR_HEIGHT * 0.5;
-  void viewport;
-  return [x, y];
 }
 
 export function welcomeViewport(): WindowViewport {

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   cubeHeroCanvasSize,
+  isMacOverlayTitleBar,
+  macOverlayContentTopInset,
   responsiveCubeHeroSize,
 } from "../domain/heroLayout";
 import { useWindowViewport } from "../infrastructure/welcomeViewport";
@@ -10,7 +12,6 @@ import { WelcomeEnterButton, WelcomeThemeToggle } from "./WelcomeControls";
 import { WelcomeCubeHeroCanvas } from "./WelcomeCubeHeroCanvas";
 
 export interface WelcomeScreenProps {
-  contentOpacity?: number;
   onEnter: () => void;
 }
 
@@ -22,10 +23,7 @@ function isInteractiveKeyboardTarget(target: EventTarget | null): boolean {
   );
 }
 
-export function WelcomeScreen({
-  contentOpacity = 1,
-  onEnter,
-}: WelcomeScreenProps) {
+export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
   const { themeMode, persistenceError, toggleTheme } = useWelcome();
   const [ready, setReady] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -59,14 +57,22 @@ export function WelcomeScreen({
   const heroSize = responsiveCubeHeroSize(viewport);
   const canvasSize = cubeHeroCanvasSize(heroSize);
   const mode = themeMode as ThemeMode;
+  const macOverlay = isMacOverlayTitleBar();
 
   return (
     <div
       ref={rootRef}
       className="welcome-screen welcome-theme-surface"
       data-ready={ready ? "true" : "false"}
+      data-mac-overlay={macOverlay ? "true" : undefined}
       tabIndex={-1}
-      style={{ opacity: contentOpacity }}
+      style={
+        macOverlay
+          ? ({
+              "--mac-content-top": `${macOverlayContentTopInset()}px`,
+            } as React.CSSProperties)
+          : undefined
+      }
     >
       <div className="welcome-grid">
         <header
