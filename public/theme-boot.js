@@ -1,7 +1,6 @@
 (function () {
-  var stored = localStorage.getItem("opencore-tauriots-theme");
-  var mode =
-    stored === "light" || stored === "dark" ? stored : "dark";
+  // Default theme until React loads authoritative preferences from the Rust store.
+  var mode = "dark";
   document.documentElement.dataset.theme = mode;
   document.documentElement.classList.toggle("dark", mode === "dark");
   document.documentElement.style.colorScheme = mode;

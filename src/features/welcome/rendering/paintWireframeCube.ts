@@ -11,7 +11,6 @@ import {
 export interface PaintWireframeCubeOptions {
   construction: number;
   orientation: Orientation;
-  rotationProgress: number;
   ink: string;
 }
 
@@ -75,7 +74,7 @@ export function paintWireframeCube(
   height: number,
   options: PaintWireframeCubeOptions,
 ): void {
-  const { construction, orientation, rotationProgress, ink } = options;
+  const { construction, orientation, ink } = options;
   const compact = Math.min(width, height) <= 32;
   const docked = Math.min(width, height) <= 20;
   const canvasPadding = docked
@@ -87,7 +86,7 @@ export function paintWireframeCube(
   const centerX = width * 0.5;
   const centerY = height * 0.5;
   const half = drawableSide * (docked ? 0.42 : compact ? 0.38 : 0.32);
-  const constructionActive = construction < 1 && rotationProgress <= 0;
+  const constructionActive = construction < 1;
   const strokeWidth = docked ? 1 : compact ? 1.25 : 2;
   const vertexRadius = docked ? 1 : compact ? 1.5 : 3.5;
 

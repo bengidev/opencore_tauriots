@@ -41,9 +41,5 @@ export async function savePreferences(
     writeMemoryPreferences(preferences);
     return;
   }
-  try {
-    await invoke("save_preferences", { preferences });
-  } catch {
-    writeMemoryPreferences(preferences);
-  }
+  await invoke("save_preferences", { preferences });
 }

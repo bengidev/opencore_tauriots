@@ -1,18 +1,15 @@
 mod preferences;
+mod window_layout;
 
 use preferences::{AppPreferences, PreferencesStore};
 use tauri::{App, LogicalSize, Manager, PhysicalPosition, State, WebviewWindow};
-
-const WELCOME_WINDOW_WIDTH: u32 = 960;
-const WELCOME_WINDOW_HEIGHT: u32 = 740;
-const HOME_WINDOW_WIDTH: u32 = 1280;
-const HOME_WINDOW_HEIGHT: u32 = 800;
+use window_layout::{home_window_size, welcome_window_size};
 
 fn window_size_for_preferences(preferences: &AppPreferences) -> (u32, u32) {
     if preferences.onboarding_completed {
-        (HOME_WINDOW_WIDTH, HOME_WINDOW_HEIGHT)
+        home_window_size()
     } else {
-        (WELCOME_WINDOW_WIDTH, WELCOME_WINDOW_HEIGHT)
+        welcome_window_size()
     }
 }
 
@@ -95,11 +92,7 @@ fn reset_preferences(store: State<'_, PreferencesStore>) -> Result<AppPreference
 }
 
 #[tauri::command]
-fn resize_and_center_window(
-    window: WebviewWindow,
-    width: u32,
-    height: u32,
-) -> Result<(), String> {
+fn resize_and_center_window(window: WebviewWindow, width: u32, height: u32) -> Result<(), String> {
     resize_and_center(&window, width, height)
 }
 

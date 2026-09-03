@@ -1,9 +1,5 @@
 import { CUBE_HERO_EDGE_INSET } from "./cubeHeroConstants";
-import {
-  BRAND_ASPECT,
-  HOME_WINDOW_SIZE,
-  WELCOME_WINDOW_SIZE,
-} from "./welcomeConstants";
+import { WELCOME_WINDOW_SIZE } from "./welcomeConstants";
 
 export interface WindowViewport {
   width: number;
@@ -53,10 +49,6 @@ export function macOverlayContentTopInset(): number {
   return macTrafficLightsBottom() + MAC_BRAND_GAP_AFTER_TRAFFIC;
 }
 
-export function brandWidth(height: number): number {
-  return height * BRAND_ASPECT;
-}
-
 export function responsiveHeroSize(
   availableWidth: number,
   availableHeight: number,
@@ -77,23 +69,9 @@ export function responsiveCubeHeroSize(viewport: WindowViewport): number {
   return responsiveHeroSize(viewport.width, viewport.height);
 }
 
-export function responsiveBrandHeight(viewport: WindowViewport): number {
-  const squareLimit = responsiveHeroSize(viewport.width, viewport.height);
-  const widthLimit =
-    (viewport.width - WELCOME_EDGE_INSET_H * 2) / BRAND_ASPECT;
-  return Math.min(squareLimit, widthLimit, BRAND_HERO_MAX / BRAND_ASPECT);
-}
-
 export function welcomeViewport(): WindowViewport {
   return {
     width: WELCOME_WINDOW_SIZE.width,
     height: WELCOME_WINDOW_SIZE.height,
-  };
-}
-
-export function homeTransitionViewport(): WindowViewport {
-  return {
-    width: HOME_WINDOW_SIZE.width,
-    height: HOME_WINDOW_SIZE.height,
   };
 }

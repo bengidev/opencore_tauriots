@@ -1,5 +1,3 @@
-import { PI } from "./cubeHeroConstants";
-
 export type CubePhase = "construction" | "morph";
 
 export interface Orientation {
@@ -20,8 +18,6 @@ export interface CubeHeroState {
   morphRngState: number;
   recentTargets: (Orientation | null)[];
   recentTargetIndex: number;
-  rotationFrom: Orientation | null;
-  lastRotationProgress: number;
   orientation: Orientation;
 }
 
@@ -39,45 +35,13 @@ export function createCubeHeroState(nowMs = performance.now()): CubeHeroState {
     morphRngState: (Date.now() & 0xffffffff) || 0xa5a55a5a,
     recentTargets: [null, null, null, null],
     recentTargetIndex: 0,
-    rotationFrom: null,
-    lastRotationProgress: 0,
     orientation: base,
   };
 }
 
-export function createDockedCubeHeroState(nowMs = performance.now()): CubeHeroState {
-  const header = headerOrientation();
-  return {
-    lastTickMs: nowMs,
-    construction: 1,
-    constructionStartedMs: null,
-    phase: "morph",
-    morphFrom: header,
-    morphTo: header,
-    morphSegmentStartMs: null,
-    morphSegmentDuration: MORPH_SEGMENT_DURATION_MAX,
-    morphRngState: 1,
-    recentTargets: [null, null, null, null],
-    recentTargetIndex: 0,
-    rotationFrom: null,
-    lastRotationProgress: 1,
-    orientation: header,
-  };
-}
-
-export function tickCubeHero(
-  state: CubeHeroState,
-  nowMs: number,
-  rotationProgress: number,
-): CubeHeroState {
+export function tickCubeHero(state: CubeHeroState, nowMs: number): CubeHeroState {
   const next = { ...state };
   next.lastTickMs = nowMs;
-
-  if (next.lastRotationProgress <= 0 && rotationProgress > 0) {
-    next.rotationFrom = freeOrientation(next, nowMs);
-    next.phase = "morph";
-  }
-  next.lastRotationProgress = rotationProgress;
 
   if (next.constructionStartedMs !== null) {
     next.construction = Math.min(
@@ -86,19 +50,17 @@ export function tickCubeHero(
     );
   }
 
-  if (rotationProgress <= 0) {
-    if (
-      next.construction >= MORPH_OVERLAP_START &&
-      next.phase === "construction"
-    ) {
-      next.phase = "morph";
-      beginMorphSegment(next, nowMs, true);
-    } else if (next.phase === "morph") {
-      advanceMorphIfNeeded(next, nowMs);
-    }
+  if (
+    next.construction >= MORPH_OVERLAP_START &&
+    next.phase === "construction"
+  ) {
+    next.phase = "morph";
+    beginMorphSegment(next, nowMs, true);
+  } else if (next.phase === "morph") {
+    advanceMorphIfNeeded(next, nowMs);
   }
 
-  next.orientation = computeOrientation(next, nowMs, rotationProgress);
+  next.orientation = freeOrientation(next, nowMs);
   return next;
 }
 
@@ -112,8 +74,6 @@ const MORPH_SEGMENT_IMMEDIATE_DURATION_MAX = 0.5;
 
 const BASE_YAW = 0.6;
 const BASE_PITCH = 0.52;
-const HEADER_YAW = PI / 4;
-const HEADER_PITCH = Math.atan(1 / Math.sqrt(2));
 
 const MORPH_YAW_RANGE: [number, number] = [0.12, 1.38];
 const MORPH_PITCH_RANGE: [number, number] = [0.1, 0.82];
@@ -121,10 +81,6 @@ const MORPH_ROLL_RANGE: [number, number] = [-0.34, 0.34];
 
 function baseOrientation(): Orientation {
   return { yaw: BASE_YAW, pitch: BASE_PITCH, roll: 0 };
-}
-
-function headerOrientation(): Orientation {
-  return { yaw: HEADER_YAW, pitch: HEADER_PITCH, roll: 0 };
 }
 
 function beginMorphSegment(
@@ -227,23 +183,6 @@ function freeOrientation(state: CubeHeroState, nowMs: number): Orientation {
     pitch: lerp(state.morphFrom.pitch, state.morphTo.pitch, t),
     roll: lerp(state.morphFrom.roll, state.morphTo.roll, t),
   };
-}
-
-function computeOrientation(
-  state: CubeHeroState,
-  nowMs: number,
-  rotationProgress: number,
-): Orientation {
-  if (rotationProgress > 0) {
-    const from = state.rotationFrom ?? freeOrientation(state, nowMs);
-    const t = clamp(rotationProgress, 0, 1);
-    return {
-      yaw: lerp(from.yaw, HEADER_YAW, t),
-      pitch: lerp(from.pitch, HEADER_PITCH, t),
-      roll: lerp(from.roll, 0, t),
-    };
-  }
-  return freeOrientation(state, nowMs);
 }
 
 function orientationDistance(a: Orientation, b: Orientation): number {

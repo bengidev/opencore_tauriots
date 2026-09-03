@@ -143,6 +143,12 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    void onReset();
+  };
+
   return (
     <div
       ref={containerRef}
@@ -168,7 +174,11 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
       onPointerMove={handlePointerMove}
       onPointerUp={finishPointerInteraction}
       onPointerCancel={finishPointerInteraction}
+      onKeyDown={handleKeyDown}
       onDragStart={(event) => event.preventDefault()}
+      role="button"
+      tabIndex={0}
+      aria-label="Reset onboarding (development only)"
     >
       RESET
     </div>

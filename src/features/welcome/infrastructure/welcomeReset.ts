@@ -14,7 +14,6 @@ export async function resetAllPersistedData(): Promise<AppPreferences> {
       const restored = await invoke<AppPreferences>("reset_preferences");
       applyThemeToDocument(restored.theme_mode);
       localStorage.removeItem(MEMORY_PREFERENCES_KEY);
-      localStorage.removeItem("opencore-tauriots-theme");
       return restored;
     } catch {
       // fall through
@@ -22,7 +21,6 @@ export async function resetAllPersistedData(): Promise<AppPreferences> {
   }
 
   localStorage.removeItem(MEMORY_PREFERENCES_KEY);
-  localStorage.removeItem("opencore-tauriots-theme");
   applyThemeToDocument(defaults.theme_mode);
 
   return defaults;

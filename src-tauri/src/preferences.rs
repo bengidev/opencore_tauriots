@@ -31,7 +31,7 @@ pub struct AppPreferences {
 }
 
 pub struct PreferencesStore {
-    path: PathBuf,
+    path: Option<PathBuf>,
     cache: Mutex<AppPreferences>,
 }
 
@@ -40,14 +40,14 @@ impl PreferencesStore {
         let path = default_preferences_path()?;
         let prefs = read_preferences_file(&path)?;
         Ok(Self {
-            path,
+            path: Some(path),
             cache: Mutex::new(prefs),
         })
     }
 
     pub fn in_memory() -> Self {
         Self {
-            path: PathBuf::from("preferences.json"),
+            path: None,
             cache: Mutex::new(AppPreferences::default()),
         }
     }
@@ -57,17 +57,20 @@ impl PreferencesStore {
     }
 
     pub fn save(&self, preferences: AppPreferences) -> Result<(), String> {
-        write_preferences_file(&self.path, &preferences)?;
+        if let Some(path) = &self.path {
+            write_preferences_file(path, &preferences)?;
+        }
         *self.cache.lock().expect("preferences lock") = preferences;
         Ok(())
     }
 }
 
 fn default_preferences_path() -> Result<PathBuf, String> {
-    let base = directories::ProjectDirs::from("io.github.bengidev", "opencore", "opencore-tauriots")
-        .ok_or_else(|| "could not resolve application data directory".to_string())?
-        .data_dir()
-        .to_path_buf();
+    let base =
+        directories::ProjectDirs::from("io.github.bengidev", "opencore", "opencore-tauriots")
+            .ok_or_else(|| "could not resolve application data directory".to_string())?
+            .data_dir()
+            .to_path_buf();
     Ok(base.join("preferences.json"))
 }
 
@@ -79,9 +82,7 @@ fn read_preferences_file(path: &PathBuf) -> Result<AppPreferences, String> {
     match serde_json::from_str(&contents) {
         Ok(preferences) => Ok(preferences),
         Err(parse_error) => {
-            eprintln!(
-                "opencore-tauriots: corrupt preferences reset to defaults ({parse_error})"
-            );
+            eprintln!("opencore-tauriots: corrupt preferences reset to defaults ({parse_error})");
             backup_corrupt_file(path)?;
             Ok(AppPreferences::default())
         }

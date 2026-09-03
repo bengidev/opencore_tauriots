@@ -20,6 +20,7 @@ interface WelcomeContextValue {
   persistenceError: string | null;
   toggleTheme: () => Promise<void>;
   setPreferences: (preferences: AppPreferences) => void;
+  setPersistenceError: (message: string | null) => void;
 }
 
 const WelcomeContext = createContext<WelcomeContextValue | null>(null);
@@ -62,6 +63,7 @@ export function WelcomeProvider({
       persistenceError,
       toggleTheme,
       setPreferences,
+      setPersistenceError,
     }),
     [preferences, persistenceError, toggleTheme],
   );

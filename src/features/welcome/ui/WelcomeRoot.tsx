@@ -23,7 +23,8 @@ function bootScreen(preferences: AppPreferences): ActiveScreen {
 }
 
 function WelcomeApp() {
-  const { preferences, setPreferences, themeMode } = useWelcome();
+  const { preferences, setPreferences, setPersistenceError, themeMode } =
+    useWelcome();
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>(() =>
     bootScreen(preferences),
   );
@@ -35,13 +36,17 @@ function WelcomeApp() {
     };
     try {
       await savePreferences(updated);
+      setPersistenceError(null);
       setPreferences(updated);
       await applyHomeWindowSize();
       setActiveScreen("home");
     } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to save preferences";
+      setPersistenceError(message);
       console.error("persist welcome completion", error);
     }
-  }, [preferences, setPreferences]);
+  }, [preferences, setPersistenceError, setPreferences]);
 
   const handleEnter = useCallback(() => {
     const outcome = reduceWelcome({ type: "enter_pressed" });
@@ -53,9 +58,10 @@ function WelcomeApp() {
   const handleReset = useCallback(async () => {
     const defaults = await resetAllPersistedData();
     setPreferences(defaults);
+    setPersistenceError(null);
     setActiveScreen("welcome");
     await applyWelcomeWindowSize();
-  }, [setPreferences]);
+  }, [setPersistenceError, setPreferences]);
 
   return (
     <div className="welcome-root">
@@ -81,12 +87,6 @@ export function WelcomeRoot() {
       const preferences = await loadPreferences();
       if (cancelled) return;
       applyThemeToDocument(preferences.theme_mode);
-      const screen = bootScreen(preferences);
-      if (screen === "welcome") {
-        await applyWelcomeWindowSize();
-      } else {
-        await applyHomeWindowSize();
-      }
       setInitialPreferences(preferences);
     })();
     return () => {

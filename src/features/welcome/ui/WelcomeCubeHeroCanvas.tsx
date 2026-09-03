@@ -15,7 +15,6 @@ import { paintWireframeCube } from "../rendering/paintWireframeCube";
 
 export interface WelcomeCubeHeroCanvasProps {
   mode: ThemeMode;
-  rotationProgress?: number;
   className?: string;
   size?: number;
   animate?: boolean;
@@ -44,7 +43,6 @@ function prefersReducedMotion(): boolean {
 
 export function WelcomeCubeHeroCanvas({
   mode,
-  rotationProgress = 0,
   className,
   size,
   animate = true,
@@ -101,28 +99,22 @@ export function WelcomeCubeHeroCanvas({
       paintWireframeCube(ctx, width, height, {
         construction: cubeStateRef.current.construction,
         orientation: cubeStateRef.current.orientation,
-        rotationProgress,
         ink: resolveInk(nowMs),
       });
     },
-    [resolveInk, rotationProgress],
+    [resolveInk],
   );
 
   useEffect(() => {
     let frame = 0;
     const loop = (nowMs: number) => {
       if (animate) {
-        cubeStateRef.current = tickCubeHero(
-          cubeStateRef.current,
-          nowMs,
-          rotationProgress,
-        );
+        cubeStateRef.current = tickCubeHero(cubeStateRef.current, nowMs);
       }
       paint(nowMs);
       const cubeAnimating =
         animate &&
-        (rotationProgress > 0 ||
-          cubeStateRef.current.construction < 1 ||
+        (cubeStateRef.current.construction < 1 ||
           cubeStateRef.current.phase === "morph");
       if (cubeAnimating || isInkTransitioning(nowMs)) {
         frame = window.requestAnimationFrame(loop);
@@ -130,7 +122,7 @@ export function WelcomeCubeHeroCanvas({
     };
     frame = window.requestAnimationFrame(loop);
     return () => window.cancelAnimationFrame(frame);
-  }, [animate, isInkTransitioning, paint, rotationProgress]);
+  }, [animate, isInkTransitioning, paint]);
 
   return (
     <canvas
