@@ -17,8 +17,9 @@
         "width": 960,
         "height": 740,
         "center": true,
-        "theme": "Dark",
+        "theme": "Light",
         "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
         "acceptFirstMouse": true,
         "trafficLightPosition": {
           "x": 13,

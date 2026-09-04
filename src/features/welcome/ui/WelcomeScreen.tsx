@@ -78,7 +78,7 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
         <header
           className="welcome-header welcome-theme-content welcome-enter welcome-enter-1"
         >
-          <div className="welcome-header-copy">
+          <div className="welcome-header-copy" data-tauri-drag-region>
             <span className="welcome-title-mark">OpenCore</span>
             <span className="welcome-label">LOCAL AI WORKSPACE</span>
           </div>
