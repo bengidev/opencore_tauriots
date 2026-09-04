@@ -99,7 +99,10 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
             />
           </div>
           <div className="welcome-copy-block">
-            <Display>Your local AI command workspace</Display>
+            <Display>
+              Your local <span className="ds-accent-text">AI</span> command
+              workspace
+            </Display>
             <Body>
               OpenCore combines chat, terminal, editing, and Rust-native
               performance in one permissioned desktop environment. To leave the
