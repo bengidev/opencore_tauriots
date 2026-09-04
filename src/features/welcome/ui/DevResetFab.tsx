@@ -1,5 +1,5 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { borderColor, foreground, type ThemeMode } from "../domain/welcomeTheme";
+import { type ThemeMode } from "../../../shared/theme/theme";
 
 const DRAG_THRESHOLD_PX = 5;
 const VIEWPORT_MARGIN_PX = 12;
@@ -48,6 +48,8 @@ function readPositionBounds(el: HTMLElement): { width: number; height: number } 
 }
 
 export function DevResetFab({ mode, onReset }: DevResetFabProps) {
+  void mode;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
   const [position, setPosition] = useState<{ left: number; top: number } | null>(
@@ -154,6 +156,8 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
       ref={containerRef}
       className={[
         "welcome-dev-reset-fab",
+        "ds-button",
+        "ds-button--secondary",
         position ? "" : "welcome-dev-reset-fab-default",
         isDragging ? "is-dragging" : "",
       ].join(" ")}
@@ -162,13 +166,8 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
           ? {
               left: position.left,
               top: position.top,
-              borderColor: borderColor(mode),
-              color: foreground(mode, "primary"),
             }
-          : {
-              borderColor: borderColor(mode),
-              color: foreground(mode, "primary"),
-            }
+          : undefined
       }
       onPointerDown={beginPointerInteraction}
       onPointerMove={handlePointerMove}
