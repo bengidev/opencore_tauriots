@@ -10,7 +10,7 @@ import {
   lerpForegroundRgb,
   THEME_TRANSITION_MS,
   type ThemeMode,
-} from "../domain/welcomeTheme";
+} from "../../../shared/theme/theme";
 import { paintWireframeCube } from "../rendering/paintWireframeCube";
 
 export interface WelcomeCubeHeroCanvasProps {

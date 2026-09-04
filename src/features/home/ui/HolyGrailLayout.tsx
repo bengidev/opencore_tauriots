@@ -18,6 +18,7 @@ import {
 import { panelRegionProps } from "../domain/panelRegionProps";
 import { usePersistedPanelOpen } from "../hooks/usePersistedPanelOpen";
 import { useResizableWidth } from "../hooks/useResizableWidth";
+import { Label } from "../../../shared/ui";
 import { HomeShellHeader } from "./HomeShellHeader";
 
 function subscribeToViewportWidth(onStoreChange: () => void): () => void {
@@ -149,7 +150,7 @@ export function HolyGrailLayout() {
           >
             <div className="home-shell-panel-surface">
               <div className="home-shell-panel-content">
-                <span className="home-shell-label">Left Panel</span>
+                <Label>Left Panel</Label>
               </div>
               <button
                 {...leftSidebar.resizeRailProps}
@@ -160,7 +161,7 @@ export function HolyGrailLayout() {
         </div>
 
         <main className="home-shell-main">
-          <span className="home-shell-label">Main Panel</span>
+          <Label>Main Panel</Label>
         </main>
 
         <div
@@ -182,7 +183,7 @@ export function HolyGrailLayout() {
                 tabIndex={rightPanelOpen ? 0 : -1}
               />
               <div className="home-shell-panel-content">
-                <span className="home-shell-label">Right Panel</span>
+                <Label>Right Panel</Label>
               </div>
             </div>
           </aside>
@@ -200,7 +201,7 @@ export function HolyGrailLayout() {
         >
           <div className="home-shell-footer-surface">
             <div className="home-shell-footer-content">
-              <span className="home-shell-label">Footer Panel</span>
+              <Label>Footer Panel</Label>
             </div>
           </div>
         </footer>

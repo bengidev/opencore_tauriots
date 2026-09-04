@@ -1,14 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  AppTitle,
+  Body,
+  Button,
+  Caption,
+  Display,
+  StatusText,
+  Surface,
+  ThemeToggleButton,
+} from "../../../shared/ui";
+import {
   cubeHeroCanvasSize,
   isMacOverlayTitleBar,
   macOverlayContentTopInset,
   responsiveCubeHeroSize,
 } from "../domain/heroLayout";
 import { useWindowViewport } from "../infrastructure/welcomeViewport";
-import { type ThemeMode } from "../domain/welcomeTheme";
+import { type ThemeMode } from "../../../shared/theme/theme";
 import { useWelcome } from "../state/welcomeContext";
-import { WelcomeEnterButton, WelcomeThemeToggle } from "./WelcomeControls";
 import { WelcomeCubeHeroCanvas } from "./WelcomeCubeHeroCanvas";
 
 export interface WelcomeScreenProps {
@@ -24,7 +33,7 @@ function isInteractiveKeyboardTarget(target: EventTarget | null): boolean {
 }
 
 export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
-  const { themeMode, persistenceError, toggleTheme } = useWelcome();
+  const { themeMode, persistenceError } = useWelcome();
   const [ready, setReady] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -60,12 +69,10 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
   const macOverlay = isMacOverlayTitleBar();
 
   return (
-    <div
-      ref={rootRef}
-      className="welcome-screen welcome-theme-surface"
+    <Surface
+      className="welcome-screen"
       data-ready={ready ? "true" : "false"}
       data-mac-overlay={macOverlay ? "true" : undefined}
-      tabIndex={-1}
       style={
         macOverlay
           ? ({
@@ -74,20 +81,13 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
           : undefined
       }
     >
-      <div className="welcome-grid">
-        <header
-          className="welcome-header welcome-theme-content welcome-enter welcome-enter-1"
-        >
-          <div className="welcome-header-copy" data-tauri-drag-region>
-            <span className="welcome-title-mark">OpenCore</span>
-            <span className="welcome-label">LOCAL AI WORKSPACE</span>
-          </div>
-          <WelcomeThemeToggle mode={mode} onToggle={() => toggleTheme()} />
+      <div ref={rootRef} className="welcome-grid" tabIndex={-1}>
+        <header className="welcome-header welcome-enter welcome-enter-1">
+          <AppTitle title="OpenCore" subtitle="LOCAL AI WORKSPACE" dragRegion />
+          <ThemeToggleButton showLabel />
         </header>
 
-        <section
-          className="welcome-hero-section welcome-theme-content welcome-enter welcome-enter-2"
-        >
+        <section className="welcome-hero-section welcome-enter welcome-enter-2">
           <div
             className="welcome-hero-wrap"
             style={{ width: canvasSize, height: canvasSize }}
@@ -99,29 +99,30 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
             />
           </div>
           <div className="welcome-copy-block">
-            <h1 className="welcome-headline">
-              Your local AI command workspace
-            </h1>
-            <p className="welcome-body">
+            <Display>
+              Your local <span className="ds-accent-text">AI</span> command
+              workspace
+            </Display>
+            <Body>
               OpenCore combines chat, terminal, editing, and Rust-native
               performance in one permissioned desktop environment. To leave the
               crowded cloud, polluted by leaks and unconsciousness, to return to
               a workspace that stays on your machine.
-            </p>
+            </Body>
           </div>
         </section>
 
-        <footer
-          className="welcome-footer welcome-theme-content welcome-enter welcome-enter-3"
-        >
+        <footer className="welcome-footer welcome-enter welcome-enter-3">
           {persistenceError ? (
-            <span className="welcome-persistence-error">{persistenceError}</span>
+            <StatusText variant="error">{persistenceError}</StatusText>
           ) : (
-            <span className="welcome-label">Press Enter</span>
+            <Caption>Press Enter</Caption>
           )}
-          <WelcomeEnterButton mode={mode} onClick={handleEnter} />
+          <Button variant="primary" onClick={handleEnter}>
+            Enter OpenCore
+          </Button>
         </footer>
       </div>
-    </div>
+    </Surface>
   );
 }

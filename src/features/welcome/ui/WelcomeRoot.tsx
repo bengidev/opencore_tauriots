@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { reduceWelcome } from "../domain/welcomeReducer";
-import { applyThemeToDocument } from "../domain/welcomeTheme";
+import { applyThemeToDocument } from "../../../shared/theme/theme";
 import {
   loadPreferences,
   savePreferences,
@@ -23,8 +23,7 @@ function bootScreen(preferences: AppPreferences): ActiveScreen {
 }
 
 function WelcomeApp() {
-  const { preferences, setPreferences, setPersistenceError, themeMode } =
-    useWelcome();
+  const { preferences, setPreferences, setPersistenceError } = useWelcome();
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>(() =>
     bootScreen(preferences),
   );
@@ -71,7 +70,7 @@ function WelcomeApp() {
         <WelcomeScreen onEnter={handleEnter} />
       )}
       {import.meta.env.DEV ? (
-        <DevResetFab mode={themeMode} onReset={handleReset} />
+        <DevResetFab onReset={handleReset} />
       ) : null}
     </div>
   );
@@ -96,7 +95,7 @@ export function WelcomeRoot() {
 
   if (!initialPreferences) {
     return (
-      <div className="welcome-boot-placeholder" aria-busy="true">
+      <div className="welcome-boot-placeholder ds-caption" aria-busy="true">
         Loading…
       </div>
     );

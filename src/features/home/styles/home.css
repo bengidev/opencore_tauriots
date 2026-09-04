@@ -43,7 +43,7 @@
   gap: 0.75rem;
   min-height: var(--home-topbar-height);
   padding: 0 1rem;
-  border-bottom: 1px solid var(--welcome-border);
+  border-bottom: 1px solid var(--border);
 }
 
 .home-shell-header[data-mac-overlay="true"] {
@@ -60,72 +60,6 @@
 
 .home-shell-header-trailing {
   margin-left: auto;
-}
-
-.home-shell-title {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-  cursor: default;
-}
-
-.home-shell-title-mark {
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: var(--welcome-fg-primary);
-}
-
-.home-shell-title-sub {
-  font-family: "Space Mono", ui-monospace, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--welcome-fg-muted);
-}
-
-.home-panel-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  padding: 0;
-  border: 1px solid var(--welcome-border);
-  border-radius: 0.375rem;
-  background: transparent;
-  color: var(--welcome-fg-muted);
-  cursor: pointer;
-  transition:
-    transform var(--home-panel-exit-duration) var(--home-ease-out),
-    color var(--home-panel-exit-duration) var(--home-ease-out),
-    border-color var(--home-panel-exit-duration) var(--home-ease-out),
-    opacity var(--home-panel-exit-duration) var(--home-ease-out);
-}
-
-.home-panel-toggle svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.home-panel-toggle:active {
-  transform: scale(0.97);
-}
-
-.home-panel-toggle[aria-pressed="false"] {
-  opacity: 0.55;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .home-panel-toggle:hover,
-  .home-panel-toggle:focus-visible {
-    color: var(--welcome-fg-primary);
-    border-color: color-mix(in srgb, var(--welcome-fg-muted) 45%, var(--welcome-border));
-    outline: none;
-  }
 }
 
 .home-shell-panel-slot {
@@ -176,7 +110,7 @@
 
 .home-shell-panel-left .home-shell-panel-surface {
   width: var(--home-left-panel-width);
-  border-right: 1px solid var(--welcome-border);
+  border-right: 1px solid var(--border);
 }
 
 .home-shell-panel-right .home-shell-panel-surface {
@@ -184,7 +118,7 @@
 }
 
 .home-shell-panel-slot-right .home-shell-panel-surface {
-  border-left: 1px solid var(--welcome-border);
+  border-left: 1px solid var(--border);
 }
 
 .home-shell-panel-slot[data-state="closed"] .home-shell-panel-surface {
@@ -292,7 +226,7 @@
   justify-content: center;
   min-height: var(--home-topbar-height);
   padding: 0 1rem;
-  border-top: 1px solid var(--welcome-border);
+  border-top: 1px solid var(--border);
   opacity: 1;
   transform: translate3d(0, 0, 0);
   transition:
@@ -349,17 +283,9 @@
 @media (hover: hover) and (pointer: fine) {
   .home-shell-resize-rail:hover,
   .home-shell-resize-rail:focus-visible {
-    background: color-mix(in srgb, var(--welcome-fg-muted) 35%, transparent);
+    background: color-mix(in srgb, var(--text-secondary) 35%, transparent);
     outline: none;
   }
-}
-
-.home-shell-label {
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-size: 0.8125rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--welcome-fg-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -369,7 +295,6 @@
   .home-shell-footer-slot,
   .home-shell-footer-surface,
   .home-shell-footer-content,
-  .home-panel-toggle,
   .home-shell-resize-rail {
     transition: none;
   }

@@ -31,11 +31,6 @@ const BORDER: Record<ThemeMode, string> = {
   dark: "rgb(34, 34, 34)",
 };
 
-const CTA: Record<ThemeMode, { bg: string; text: string }> = {
-  light: { bg: "rgb(0, 0, 0)", text: "rgb(255, 255, 255)" },
-  dark: { bg: "rgb(255, 255, 255)", text: "rgb(0, 0, 0)" },
-};
-
 export function foreground(mode: ThemeMode, token: ForegroundToken): string {
   return FOREGROUND[mode][token];
 }
@@ -64,10 +59,6 @@ export function surface(mode: ThemeMode): string {
 
 export function borderColor(mode: ThemeMode): string {
   return BORDER[mode];
-}
-
-export function ctaColors(mode: ThemeMode): { bg: string; text: string } {
-  return CTA[mode];
 }
 
 export function nextThemeMode(mode: ThemeMode): ThemeMode {

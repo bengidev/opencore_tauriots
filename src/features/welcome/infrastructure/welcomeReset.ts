@@ -4,7 +4,7 @@ import {
   MEMORY_PREFERENCES_KEY,
   type AppPreferences,
 } from "./welcomePreferencesTypes";
-import { applyThemeToDocument } from "../domain/welcomeTheme";
+import { applyThemeToDocument } from "../../../shared/theme/theme";
 
 export async function resetAllPersistedData(): Promise<AppPreferences> {
   const defaults: AppPreferences = { ...DEFAULT_PREFERENCES };
