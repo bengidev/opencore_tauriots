@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { reduceWelcome } from "../domain/welcomeReducer";
-import { applyThemeToDocument } from "../domain/welcomeTheme";
+import { applyThemeToDocument } from "../../../shared/theme/theme";
 import {
   loadPreferences,
   savePreferences,

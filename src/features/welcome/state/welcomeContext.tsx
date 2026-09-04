@@ -11,7 +11,7 @@ import {
   applyThemeToDocument,
   nextThemeMode,
   type ThemeMode,
-} from "../domain/welcomeTheme";
+} from "../../../shared/theme/theme";
 import { savePreferences } from "../infrastructure/welcomePreferencesApi";
 import type { AppPreferences } from "../infrastructure/welcomePreferencesTypes";
 

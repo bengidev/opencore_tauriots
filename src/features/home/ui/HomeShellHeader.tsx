@@ -1,6 +1,12 @@
 import { isMacOverlayTitleBar } from "../../../shared/platform/windowChrome";
-import { HomePanelToggleButton } from "./HomePanelToggleButton";
-import { HomeThemeToggleButton } from "./HomeThemeToggleButton";
+import {
+  AppTitle,
+  FooterPanelIcon,
+  IconButton,
+  LeftPanelIcon,
+  RightPanelIcon,
+  ThemeToggleButton,
+} from "../../../shared/ui";
 
 type HomeShellHeaderProps = {
   leftPanelOpen: boolean;
@@ -27,29 +33,42 @@ export function HomeShellHeader({
       data-mac-overlay={macOverlay ? "true" : undefined}
     >
       <div className="home-shell-header-leading">
-        <HomePanelToggleButton
-          panel="left"
-          expanded={leftPanelOpen}
-          onToggle={onToggleLeftPanel}
+        <IconButton
+          size="sm"
+          aria-label={
+            leftPanelOpen ? "Collapse left panel" : "Expand left panel"
+          }
+          pressed={leftPanelOpen}
+          icon={<LeftPanelIcon />}
+          onClick={onToggleLeftPanel}
         />
       </div>
 
-      <div className="home-shell-title" data-tauri-drag-region>
-        <span className="home-shell-title-mark">OpenCore</span>
-        <span className="home-shell-title-sub">Local AI Workspace</span>
-      </div>
+      <AppTitle
+        title="OpenCore"
+        subtitle="Local AI Workspace"
+        dragRegion
+      />
 
       <div className="home-shell-header-trailing">
-        <HomeThemeToggleButton />
-        <HomePanelToggleButton
-          panel="footer"
-          expanded={footerPanelOpen}
-          onToggle={onToggleFooterPanel}
+        <ThemeToggleButton />
+        <IconButton
+          size="sm"
+          aria-label={
+            footerPanelOpen ? "Collapse footer panel" : "Expand footer panel"
+          }
+          pressed={footerPanelOpen}
+          icon={<FooterPanelIcon />}
+          onClick={onToggleFooterPanel}
         />
-        <HomePanelToggleButton
-          panel="right"
-          expanded={rightPanelOpen}
-          onToggle={onToggleRightPanel}
+        <IconButton
+          size="sm"
+          aria-label={
+            rightPanelOpen ? "Collapse right panel" : "Expand right panel"
+          }
+          pressed={rightPanelOpen}
+          icon={<RightPanelIcon />}
+          onClick={onToggleRightPanel}
         />
       </div>
     </header>

@@ -16,7 +16,7 @@ import {
   responsiveCubeHeroSize,
 } from "../domain/heroLayout";
 import { useWindowViewport } from "../infrastructure/welcomeViewport";
-import { type ThemeMode } from "../domain/welcomeTheme";
+import { type ThemeMode } from "../../../shared/theme/theme";
 import { useWelcome } from "../state/welcomeContext";
 import { WelcomeCubeHeroCanvas } from "./WelcomeCubeHeroCanvas";
 
