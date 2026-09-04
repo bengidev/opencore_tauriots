@@ -158,6 +158,7 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
         "welcome-dev-reset-fab",
         "ds-button",
         "ds-button--secondary",
+        "ds-button--compact",
         position ? "" : "welcome-dev-reset-fab-default",
         isDragging ? "is-dragging" : "",
       ].join(" ")}

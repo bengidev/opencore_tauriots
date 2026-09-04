@@ -16,9 +16,13 @@ export function ThemeToggleButton({ showLabel = false }: ThemeToggleButtonProps)
 
   if (showLabel) {
     return (
-      <Button variant="secondary" onClick={() => void toggleTheme()}>
+      <Button
+        variant="primary"
+        className="ds-button--compact"
+        onClick={() => void toggleTheme()}
+      >
         <Icon />
-        <span style={{ marginLeft: "0.4rem" }}>{label}</span>
+        <span>{label}</span>
       </Button>
     );
   }
@@ -26,6 +30,7 @@ export function ThemeToggleButton({ showLabel = false }: ThemeToggleButtonProps)
   return (
     <IconButton
       size="sm"
+      className="ds-icon-button--inverted"
       aria-label={ariaLabel}
       icon={<Icon />}
       onClick={() => void toggleTheme()}

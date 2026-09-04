@@ -59,9 +59,6 @@
   touch-action: none;
   user-select: none;
   cursor: grab;
-  font-family: "Space Mono", ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
 }
 
 .welcome-dev-reset-fab-default {
