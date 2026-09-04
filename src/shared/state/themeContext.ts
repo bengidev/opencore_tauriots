@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { ThemeMode } from "../../features/welcome/domain/welcomeTheme";
+import type { ThemeMode } from "../theme/theme";
 
 export interface ThemeContextValue {
   themeMode: ThemeMode;
