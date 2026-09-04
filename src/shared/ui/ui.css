@@ -99,3 +99,89 @@
     outline: none;
   }
 }
+
+.ds-surface {
+  background-color: var(--black);
+  color: var(--text-primary);
+  transition: background-color var(--duration-theme) var(--ease-out);
+}
+
+.ds-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border: 1px solid var(--border-visible);
+  border-radius: var(--radius);
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: var(--label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ds-tag {
+  display: inline-flex;
+  padding: 4px 12px;
+  border: 1px solid var(--border-visible);
+  border-radius: var(--radius);
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: var(--caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ds-tag--active {
+  color: var(--text-display);
+  border-color: var(--text-display);
+}
+
+.ds-display {
+  font-family: "Doto", "Space Mono", monospace;
+  font-size: clamp(var(--display-md), 4vw, var(--display-lg));
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-display);
+  margin: 0;
+}
+
+.ds-headline {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--heading);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-display);
+  margin: 0;
+}
+
+.ds-body {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--body-sm);
+  line-height: 1.55;
+  color: var(--text-primary);
+  opacity: 0.72;
+  margin: 0;
+}
+
+.ds-caption {
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: var(--caption);
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.ds-status {
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: var(--caption);
+}
+
+.ds-status--error {
+  color: var(--accent);
+}
+
+.ds-status--loading,
+.ds-status--info {
+  color: var(--text-secondary);
+}
