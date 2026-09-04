@@ -1,5 +1,3 @@
-import { Label } from "./Label";
-
 export interface AppTitleProps {
   title: string;
   subtitle: string;
@@ -14,7 +12,7 @@ export function AppTitle({ title, subtitle, dragRegion, className }: AppTitlePro
       data-tauri-drag-region={dragRegion ? true : undefined}
     >
       <span className="ds-app-title__mark">{title}</span>
-      <Label>{subtitle}</Label>
+      <span className="ds-app-title__subtitle">{subtitle}</span>
     </div>
   );
 }
