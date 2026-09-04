@@ -1,4 +1,4 @@
-# Nothing Design System
+# Design System
 
 **Date:** 2026-09-04  
 **Status:** Approved  
@@ -6,7 +6,7 @@
 
 ## Summary
 
-Implement the Nothing-inspired design system as the app-wide visual foundation. Features compose screens from shared UI primitives in `src/shared/ui/`; feature CSS retains layout and animation only. Dark and light modes are first-class peers. All interactive and structural elements use **0px border-radius** (sharp rectangles).
+Implement the shared design system as the app-wide visual foundation. Features compose screens from shared UI primitives in `src/shared/ui/`; feature CSS retains layout and animation only. Dark and light modes are first-class peers. All interactive and structural elements use **0px border-radius** (sharp rectangles).
 
 Scope includes foundation tokens, a shared component library, and migration of the welcome and home screens.
 
@@ -22,7 +22,7 @@ Scope includes foundation tokens, a shared component library, and migration of t
 
 ## Requirements
 
-1. Semantic design tokens in `src/shared/styles/tokens.css` covering Nothing palette (surfaces, text, borders, accent, status, spacing, type scale, motion).
+1. Semantic design tokens in `src/shared/styles/tokens.css` covering surfaces, text, borders, accent, status, spacing, type scale, and motion.
 2. Load fonts: Space Grotesk, Space Mono (existing), Doto (new, display only).
 3. Move theme logic from `welcomeTheme.ts` to `src/shared/theme/theme.ts` with expanded palette for canvas/inline use.
 4. Import global styles from `src/main.tsx` (not the welcome feature barrel).
@@ -222,13 +222,13 @@ No toasts. No red backgrounds.
 
 ### AppTitle
 
-Composes title mark (Space Grotesk, `--subheading` weight 500) + `Label` subtitle. Optional `dragRegion` prop sets `data-tauri-drag-region`.
+Composes title mark (Space Grotesk, `--subheading` weight 500) + plain uppercase subtitle (Space Mono, `--label` size, `--text-secondary`). Optional `dragRegion` prop sets `data-tauri-drag-region`.
 
 ### ThemeToggleButton
 
 Uses `useThemeMode()`. Props:
 
-- `showLabel` (default false): when true, renders as `Button variant="secondary"` with icon + "Light"/"Dark" text (welcome). When false, renders as `IconButton` with sun/moon icon only (home).
+- `showLabel` (default false): when true, renders as compact `Button variant="primary"` with icon + "Light"/"Dark" text (welcome). When false, renders as inverted `IconButton` with sun/moon icon only (home).
 
 ## Feature Migration
 
@@ -244,7 +244,7 @@ Uses `useThemeMode()`. Props:
   </header>
   <section className="welcome-hero-section">
     <WelcomeCubeHeroCanvas />
-    <Display as="h1">Your local AI command workspace</Display>
+    <Display as="h1">Your local <span class="ds-accent-text">AI</span> command workspace</Display>
     <Body>...</Body>
   </section>
   <footer className="welcome-footer">
