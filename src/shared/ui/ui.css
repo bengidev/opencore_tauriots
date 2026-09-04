@@ -185,3 +185,24 @@
 .ds-status--info {
   color: var(--text-secondary);
 }
+
+.ds-app-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ds-app-title__mark {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--subheading);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.ds-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
