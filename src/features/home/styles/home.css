@@ -1,0 +1,376 @@
+.home-root {
+  --home-traffic-lights-inset: 84px;
+  --home-left-panel-width: 16rem;
+  --home-right-panel-width: 17.5rem;
+  --home-topbar-height: 2.75rem;
+  --home-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --home-panel-enter-duration: 220ms;
+  --home-panel-exit-duration: 160ms;
+
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/*
+ * Classic holy grail via grid areas — header/footer span all columns.
+ */
+.home-shell {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "left main right"
+    "footer footer footer";
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.home-shell-body {
+  display: contents;
+}
+
+.home-shell-header {
+  grid-area: header;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--home-topbar-height);
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--welcome-border);
+}
+
+.home-shell-header[data-mac-overlay="true"] {
+  padding-left: calc(var(--home-traffic-lights-inset) + 0.5rem);
+}
+
+.home-shell-header-leading,
+.home-shell-header-trailing {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.home-shell-header-trailing {
+  margin-left: auto;
+}
+
+.home-shell-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  cursor: default;
+}
+
+.home-shell-title-mark {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--welcome-fg-primary);
+}
+
+.home-shell-title-sub {
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--welcome-fg-muted);
+}
+
+.home-panel-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--welcome-border);
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--welcome-fg-muted);
+  cursor: pointer;
+  transition:
+    transform var(--home-panel-exit-duration) var(--home-ease-out),
+    color var(--home-panel-exit-duration) var(--home-ease-out),
+    border-color var(--home-panel-exit-duration) var(--home-ease-out),
+    opacity var(--home-panel-exit-duration) var(--home-ease-out);
+}
+
+.home-panel-toggle svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.home-panel-toggle:active {
+  transform: scale(0.97);
+}
+
+.home-panel-toggle[aria-pressed="false"] {
+  opacity: 0.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-panel-toggle:hover,
+  .home-panel-toggle:focus-visible {
+    color: var(--welcome-fg-primary);
+    border-color: color-mix(in srgb, var(--welcome-fg-muted) 45%, var(--welcome-border));
+    outline: none;
+  }
+}
+
+.home-shell-panel-slot {
+  container-type: inline-size;
+  flex-shrink: 0;
+  overflow: hidden;
+  width: var(--home-panel-slot-width);
+  min-height: 0;
+  transition: width var(--home-panel-enter-duration) var(--home-ease-out);
+}
+
+.home-shell-panel-slot[data-resizing="true"] {
+  transition: none;
+}
+
+.home-shell-panel-slot-left {
+  grid-area: left;
+}
+
+.home-shell-panel-slot-right {
+  grid-area: right;
+}
+
+.home-shell-panel-slot[data-state="closed"] {
+  width: 0;
+  transition-duration: var(--home-panel-exit-duration);
+}
+
+.home-shell-panel {
+  position: relative;
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+
+.home-shell-panel-surface {
+  position: relative;
+  display: flex;
+  width: var(--home-panel-slot-width);
+  height: 100%;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform var(--home-panel-enter-duration) var(--home-ease-out),
+    opacity var(--home-panel-enter-duration) var(--home-ease-out);
+}
+
+.home-shell-panel-slot-left .home-shell-panel-surface {
+  border-right: 1px solid var(--welcome-border);
+}
+
+.home-shell-panel-slot-right .home-shell-panel-surface {
+  border-left: 1px solid var(--welcome-border);
+}
+
+.home-shell-panel-slot[data-state="closed"] .home-shell-panel-surface {
+  opacity: 0;
+  transform: translate3d(-10px, 0, 0);
+  transition-duration: var(--home-panel-exit-duration);
+}
+
+.home-shell-panel-slot-right[data-state="closed"] .home-shell-panel-surface {
+  transform: translate3d(10px, 0, 0);
+}
+
+.home-shell-panel-content {
+  opacity: var(--home-panel-content-opacity, 1);
+  transition:
+    transform var(--home-panel-enter-duration) var(--home-ease-out),
+    opacity var(--home-panel-enter-duration) var(--home-ease-out);
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-width: 0;
+  min-height: 0;
+  padding: 1rem;
+}
+
+.home-shell-panel-slot-left .home-shell-panel-content {
+  transform: translate3d(
+    calc((1 - var(--home-panel-content-opacity, 1)) * -10px),
+    0,
+    0
+  );
+}
+
+.home-shell-panel-slot-right .home-shell-panel-content {
+  transform: translate3d(
+    calc((1 - var(--home-panel-content-opacity, 1)) * 10px),
+    0,
+    0
+  );
+}
+
+.home-shell-panel-slot[data-content-hidden="true"] .home-shell-panel-content {
+  visibility: hidden;
+}
+
+.home-shell-panel-slot[data-content-narrow="true"] .home-shell-panel-surface {
+  border-color: transparent;
+}
+
+.home-shell-panel-slot[data-resizing="true"] .home-shell-panel-content {
+  transition: none;
+}
+
+@container (max-width: 72px) {
+  .home-shell-panel-content {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+.home-shell-panel-slot[data-state="closed"] .home-shell-resize-rail {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.home-shell-main {
+  grid-area: main;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 1rem;
+}
+
+.home-shell-footer-slot {
+  grid-area: footer;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--home-panel-enter-duration) var(--home-ease-out);
+}
+
+.home-shell-footer-slot[data-state="open"] {
+  min-height: var(--home-topbar-height);
+}
+
+.home-shell-footer-slot[data-state="closed"] {
+  grid-template-rows: 0fr;
+  transition-duration: var(--home-panel-exit-duration);
+}
+
+.home-shell-footer {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.home-shell-footer-surface {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--home-topbar-height);
+  padding: 0 1rem;
+  border-top: 1px solid var(--welcome-border);
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform var(--home-panel-enter-duration) var(--home-ease-out),
+    opacity var(--home-panel-enter-duration) var(--home-ease-out);
+}
+
+.home-shell-footer-content {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+.home-shell-footer-slot[data-state="closed"] .home-shell-footer-content,
+.home-shell-footer-slot[data-state="closed"] .home-shell-footer-surface {
+  opacity: 0;
+}
+
+.home-shell-footer-slot[data-state="closed"] .home-shell-footer-surface {
+  transform: translate3d(0, 8px, 0);
+  transition-duration: var(--home-panel-exit-duration);
+}
+
+.home-shell-footer-slot[data-state="closed"] .home-shell-footer-content {
+  visibility: hidden;
+}
+
+.home-shell-resize-rail {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: 4px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+  opacity: 1;
+  transition: opacity var(--home-panel-exit-duration) var(--home-ease-out);
+}
+
+.home-shell-resize-rail-right {
+  right: -2px;
+}
+
+.home-shell-resize-rail-left {
+  left: -2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-shell-resize-rail:hover,
+  .home-shell-resize-rail:focus-visible {
+    background: color-mix(in srgb, var(--welcome-fg-muted) 35%, transparent);
+    outline: none;
+  }
+}
+
+.home-shell-label {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--welcome-fg-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-shell-panel-slot,
+  .home-shell-panel-surface,
+  .home-shell-panel-content,
+  .home-shell-footer-slot,
+  .home-shell-footer-surface,
+  .home-shell-footer-content,
+  .home-panel-toggle,
+  .home-shell-resize-rail {
+    transition: none;
+  }
+
+  .home-shell-panel-slot[data-state="closed"] .home-shell-panel-surface,
+  .home-shell-footer-slot[data-state="closed"] .home-shell-footer-surface {
+    opacity: 1;
+    transform: none;
+  }
+}
