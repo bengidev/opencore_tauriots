@@ -301,27 +301,6 @@ html[data-theme="light"] {
   transition-delay: 0.2s;
 }
 
-.welcome-home-placeholder {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.welcome-home-body {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.welcome-home-message {
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-size: 0.9375rem;
-  opacity: 0.65;
-}
 
 .welcome-boot-placeholder {
   display: flex;
