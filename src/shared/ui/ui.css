@@ -1,0 +1,101 @@
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-theme) var(--ease-out),
+    color var(--duration-theme) var(--ease-out),
+    border-color var(--duration-theme) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.ds-button--primary {
+  background-color: var(--text-display);
+  color: var(--black);
+}
+
+.ds-button--secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-visible);
+}
+
+.ds-button--ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+}
+
+.ds-button--destructive {
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.ds-button:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ds-button:hover {
+    opacity: 0.82;
+  }
+}
+
+.ds-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--border-visible);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.ds-icon-button--sm {
+  width: 28px;
+  height: 28px;
+}
+
+.ds-icon-button--md {
+  width: 44px;
+  height: 44px;
+}
+
+.ds-icon-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ds-icon-button:active {
+  transform: scale(0.97);
+}
+
+.ds-icon-button[aria-pressed="false"] {
+  opacity: 0.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ds-icon-button:hover,
+  .ds-icon-button:focus-visible {
+    color: var(--text-primary);
+    border-color: color-mix(in srgb, var(--text-secondary) 45%, var(--border-visible));
+    outline: none;
+  }
+}
