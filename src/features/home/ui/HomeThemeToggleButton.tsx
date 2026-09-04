@@ -1,4 +1,4 @@
-import { useWelcome } from "../../welcome/state/welcomeContext";
+import { useThemeMode } from "../../../shared/state/themeContext";
 
 function ThemeSunIcon() {
   return (
@@ -37,7 +37,7 @@ function ThemeMoonIcon() {
 }
 
 export function HomeThemeToggleButton() {
-  const { themeMode, toggleTheme } = useWelcome();
+  const { themeMode, toggleTheme } = useThemeMode();
   const label = themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode";
   const Icon = themeMode === "dark" ? ThemeSunIcon : ThemeMoonIcon;
 

@@ -1,4 +1,5 @@
 import { CUBE_HERO_EDGE_INSET } from "./cubeHeroConstants";
+import { isMacOverlayTitleBar } from "../../../shared/platform/windowChrome";
 import { WELCOME_WINDOW_SIZE } from "./welcomeConstants";
 
 export interface WindowViewport {
@@ -26,26 +27,17 @@ export function cubeHeroCanvasSize(heroSize: number): number {
   return heroSize + CUBE_HERO_EDGE_INSET * 2;
 }
 
-function isMacPlatform(): boolean {
-  return (
-    typeof navigator !== "undefined" &&
-    /Mac/i.test(navigator.platform || navigator.userAgent)
-  );
-}
-
-export function isMacOverlayTitleBar(): boolean {
-  return isMacPlatform();
-}
+export { isMacOverlayTitleBar } from "../../../shared/platform/windowChrome";
 
 /** Y coordinate of the bottom edge of the traffic-light cluster. */
 export function macTrafficLightsBottom(): number {
-  if (!isMacPlatform()) return 0;
+  if (!isMacOverlayTitleBar()) return 0;
   return MAC_TRAFFIC_LIGHT_ORIGIN_Y + MAC_TRAFFIC_LIGHT_CLUSTER_HEIGHT;
 }
 
 /** Top inset for welcome content that sits below the traffic lights + gap. */
 export function macOverlayContentTopInset(): number {
-  if (!isMacPlatform()) return 0;
+  if (!isMacOverlayTitleBar()) return 0;
   return macTrafficLightsBottom() + MAC_BRAND_GAP_AFTER_TRAFFIC;
 }
 

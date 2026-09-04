@@ -4,7 +4,7 @@ import {
   HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
   HOME_SIDEBAR_RESIZE_MIN_WIDTH_PX,
   readStoredSidebarWidth,
-  shouldCollapsePanelSize,
+  resolveResizeEndAction,
   writeStoredSidebarWidth,
 } from "../domain/homeLayoutConstants";
 
@@ -51,6 +51,14 @@ export function useResizableWidth({
     widthRef.current = width;
   }, [width]);
 
+  useEffect(() => {
+    return () => {
+      resizeStateRef.current = null;
+      document.body.style.removeProperty("cursor");
+      document.body.style.removeProperty("user-select");
+    };
+  }, []);
+
   const commitWidth = useCallback(
     (nextWidth: number) => {
       const clamped = clampWidth(nextWidth, resizeMinWidth, maxWidth);
@@ -77,10 +85,17 @@ export function useResizableWidth({
 
       suppressClickRef.current = resizeState.moved;
       if (resizeState.moved) {
-        if (shouldCollapsePanelSize(widthRef.current, collapseThreshold)) {
+        const action = resolveResizeEndAction(
+          widthRef.current,
+          collapseThreshold,
+          resizeMinWidth,
+          maxWidth,
+        );
+
+        if (action === "collapse") {
           collapsePanel();
         } else {
-          commitWidth(widthRef.current);
+          commitWidth(action.commitWidth);
         }
       }
 
@@ -89,7 +104,7 @@ export function useResizableWidth({
       document.body.style.removeProperty("cursor");
       document.body.style.removeProperty("user-select");
     },
-    [collapsePanel, collapseThreshold, commitWidth],
+    [collapsePanel, collapseThreshold, commitWidth, maxWidth, resizeMinWidth],
   );
 
   const onPointerDown = useCallback(
@@ -186,11 +201,6 @@ export function useResizableWidth({
   useEffect(() => {
     setWidth((current) => {
       const clamped = clampWidth(current, resizeMinWidth, maxWidth);
-      if (shouldCollapsePanelSize(clamped, collapseThreshold)) {
-        collapsePanel();
-        return lastCommittedWidthRef.current;
-      }
-
       if (clamped !== current) {
         lastCommittedWidthRef.current = clamped;
         writeStoredSidebarWidth(storageKey, clamped);
@@ -198,13 +208,7 @@ export function useResizableWidth({
 
       return clamped;
     });
-  }, [
-    collapsePanel,
-    collapseThreshold,
-    maxWidth,
-    resizeMinWidth,
-    storageKey,
-  ]);
+  }, [maxWidth, resizeMinWidth, storageKey]);
 
   return {
     width,

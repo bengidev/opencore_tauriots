@@ -4,8 +4,6 @@ export const HOME_MAC_TRAFFIC_LIGHTS_INSET_PX = 84;
 export const HOME_LEFT_SIDEBAR_DEFAULT_WIDTH_PX = 256;
 export const HOME_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX = 280;
 
-export const HOME_LEFT_SIDEBAR_MIN_WIDTH_PX = 200;
-export const HOME_RIGHT_SIDEBAR_MIN_WIDTH_PX = 200;
 export const HOME_MAIN_MIN_WIDTH_PX = 320;
 
 /** Drag below this width on release to auto-collapse the panel. */
@@ -19,6 +17,10 @@ export const HOME_SIDEBAR_RESIZE_MIN_WIDTH_PX = 0;
 export const HOME_LEFT_SIDEBAR_WIDTH_KEY = "opencore:home:left-sidebar-width";
 export const HOME_RIGHT_SIDEBAR_WIDTH_KEY = "opencore:home:right-sidebar-width";
 
+export const HOME_LEFT_PANEL_OPEN_KEY = "opencore:home:left-panel-open";
+export const HOME_RIGHT_PANEL_OPEN_KEY = "opencore:home:right-panel-open";
+export const HOME_FOOTER_PANEL_OPEN_KEY = "opencore:home:footer-panel-open";
+
 export function clampWidth(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
@@ -28,14 +30,6 @@ export function shouldCollapsePanelSize(
   threshold: number,
 ): boolean {
   return size < threshold;
-}
-
-/** @deprecated Use shouldCollapsePanelSize */
-export function shouldCollapseSidebarWidth(
-  width: number,
-  threshold = HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
-): boolean {
-  return shouldCollapsePanelSize(width, threshold);
 }
 
 export function panelContentOpacity(
@@ -54,31 +48,23 @@ export function panelContentOpacity(
   return (size - fadeEnd) / (fadeStart - fadeEnd);
 }
 
-/** @deprecated Use panelContentOpacity */
-export function sidebarContentOpacity(
-  width: number,
-  fadeEnd = HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
-  fadeStart = HOME_SIDEBAR_CONTENT_FADE_START_PX,
-): number {
-  return panelContentOpacity(width, fadeEnd, fadeStart);
-}
-
 export function isPanelContentHidden(size: number, fadeEnd: number): boolean {
-  return size < fadeEnd;
+  return size <= fadeEnd;
 }
 
-export function readStoredPanelSize(
-  storageKey: string,
-  fallback: number,
-): number {
-  return readStoredSidebarWidth(storageKey, fallback);
-}
+export type ResizeEndAction = "collapse" | { commitWidth: number };
 
-export function writeStoredPanelSize(
-  storageKey: string,
-  size: number,
-): void {
-  writeStoredSidebarWidth(storageKey, size);
+export function resolveResizeEndAction(
+  width: number,
+  collapseThreshold: number,
+  resizeMinWidth: number,
+  maxWidth: number,
+): ResizeEndAction {
+  if (shouldCollapsePanelSize(width, collapseThreshold)) {
+    return "collapse";
+  }
+
+  return { commitWidth: clampWidth(width, resizeMinWidth, maxWidth) };
 }
 
 export function readStoredSidebarWidth(
@@ -113,13 +99,47 @@ export function writeStoredSidebarWidth(
   }
 }
 
-export function resolveSidebarMaximumWidth(
+export function readStoredPanelOpen(
+  storageKey: string,
+  fallback: boolean,
+): boolean {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(storageKey);
+    if (raw === null) {
+      return fallback;
+    }
+
+    return raw === "true";
+  } catch {
+    return fallback;
+  }
+}
+
+export function writeStoredPanelOpen(
+  storageKey: string,
+  open: boolean,
+): void {
+  try {
+    window.localStorage.setItem(storageKey, String(open));
+  } catch {
+    // Ignore quota or privacy errors.
+  }
+}
+
+export function sidebarMaxWidth(
   viewportWidth: number,
   reservedWidth: number,
-  ratio = 0.42,
 ): number {
   return Math.max(
-    HOME_LEFT_SIDEBAR_MIN_WIDTH_PX,
-    Math.floor(viewportWidth * ratio) - reservedWidth,
+    HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
+    viewportWidth - reservedWidth - HOME_MAIN_MIN_WIDTH_PX,
   );
+}
+
+export function reservedSidebarWidth(open: boolean, width: number): number {
+  return open ? width : 0;
 }

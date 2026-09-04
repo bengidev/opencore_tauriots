@@ -1,4 +1,4 @@
-import { isMacOverlayTitleBar } from "../../welcome/domain/heroLayout";
+import { isMacOverlayTitleBar } from "../../../shared/platform/windowChrome";
 import { HomePanelToggleButton } from "./HomePanelToggleButton";
 import { HomeThemeToggleButton } from "./HomeThemeToggleButton";
 

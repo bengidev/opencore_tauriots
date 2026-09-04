@@ -1,23 +1,22 @@
+import { type CSSProperties, useCallback, useRef, useSyncExternalStore } from "react";
 import {
-  type CSSProperties,
-  useCallback,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
-import {
+  HOME_FOOTER_PANEL_OPEN_KEY,
+  HOME_LEFT_PANEL_OPEN_KEY,
   HOME_LEFT_SIDEBAR_DEFAULT_WIDTH_PX,
   HOME_LEFT_SIDEBAR_WIDTH_KEY,
   HOME_MAC_TRAFFIC_LIGHTS_INSET_PX,
   HOME_MAIN_MIN_WIDTH_PX,
+  HOME_RIGHT_PANEL_OPEN_KEY,
   HOME_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX,
   HOME_RIGHT_SIDEBAR_WIDTH_KEY,
   HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
   HOME_SIDEBAR_CONTENT_FADE_START_PX,
   HOME_TOPBAR_HEIGHT_PX,
-  readStoredSidebarWidth,
+  reservedSidebarWidth,
+  sidebarMaxWidth,
 } from "../domain/homeLayoutConstants";
 import { panelRegionProps } from "../domain/panelRegionProps";
+import { usePersistedPanelOpen } from "../hooks/usePersistedPanelOpen";
 import { useResizableWidth } from "../hooks/useResizableWidth";
 import { HomeShellHeader } from "./HomeShellHeader";
 
@@ -34,32 +33,29 @@ function panelState(open: boolean): "open" | "closed" {
   return open ? "open" : "closed";
 }
 
-function reservedSidebarWidth(open: boolean, width: number): number {
-  return open ? width : 0;
-}
-
-function sidebarMaxWidth(
-  viewportWidth: number,
-  reservedWidth: number,
-): number {
-  return Math.max(
-    HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
-    viewportWidth - reservedWidth - HOME_MAIN_MIN_WIDTH_PX,
-  );
-}
-
 export function HolyGrailLayout() {
-  const [leftPanelOpen, setLeftPanelOpen] = useState(true);
-  const [rightPanelOpen, setRightPanelOpen] = useState(true);
-  const [footerPanelOpen, setFooterPanelOpen] = useState(true);
+  const {
+    open: leftPanelOpen,
+    toggle: toggleLeftPanel,
+    setOpen: setLeftPanelOpen,
+  } = usePersistedPanelOpen(HOME_LEFT_PANEL_OPEN_KEY);
+  const {
+    open: rightPanelOpen,
+    toggle: toggleRightPanel,
+    setOpen: setRightPanelOpen,
+  } = usePersistedPanelOpen(HOME_RIGHT_PANEL_OPEN_KEY);
+  const {
+    open: footerPanelOpen,
+    toggle: toggleFooterPanel,
+  } = usePersistedPanelOpen(HOME_FOOTER_PANEL_OPEN_KEY);
 
   const collapseLeftPanel = useCallback(() => {
     setLeftPanelOpen(false);
-  }, []);
+  }, [setLeftPanelOpen]);
 
   const collapseRightPanel = useCallback(() => {
     setRightPanelOpen(false);
-  }, []);
+  }, [setRightPanelOpen]);
 
   const viewportWidth = useSyncExternalStore(
     subscribeToViewportWidth,
@@ -70,40 +66,14 @@ export function HolyGrailLayout() {
       HOME_MAIN_MIN_WIDTH_PX,
   );
 
-  const leftWidthRef = useRef(
-    readStoredSidebarWidth(
-      HOME_LEFT_SIDEBAR_WIDTH_KEY,
-      HOME_LEFT_SIDEBAR_DEFAULT_WIDTH_PX,
-    ),
-  );
-  const rightWidthRef = useRef(
-    readStoredSidebarWidth(
-      HOME_RIGHT_SIDEBAR_WIDTH_KEY,
-      HOME_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX,
-    ),
-  );
-
-  const rightPanelMaxWidth = sidebarMaxWidth(
-    viewportWidth,
-    reservedSidebarWidth(leftPanelOpen, leftWidthRef.current),
-  );
-
-  const rightPanel = useResizableWidth({
-    side: "right",
-    storageKey: HOME_RIGHT_SIDEBAR_WIDTH_KEY,
-    defaultWidth: HOME_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX,
-    maxWidth: rightPanelMaxWidth,
-    onRequestCollapse: collapseRightPanel,
-  });
-
-  rightWidthRef.current = rightPanel.width;
+  const rightWidthRef = useRef(HOME_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX);
 
   const leftPanelMaxWidth = sidebarMaxWidth(
     viewportWidth,
     reservedSidebarWidth(rightPanelOpen, rightWidthRef.current),
   );
 
-  const leftPanel = useResizableWidth({
+  const leftSidebar = useResizableWidth({
     side: "left",
     storageKey: HOME_LEFT_SIDEBAR_WIDTH_KEY,
     defaultWidth: HOME_LEFT_SIDEBAR_DEFAULT_WIDTH_PX,
@@ -111,22 +81,35 @@ export function HolyGrailLayout() {
     onRequestCollapse: collapseLeftPanel,
   });
 
-  leftWidthRef.current = leftPanel.width;
+  const rightPanelMaxWidth = sidebarMaxWidth(
+    viewportWidth,
+    reservedSidebarWidth(leftPanelOpen, leftSidebar.width),
+  );
 
-  const isResizingPanels = leftPanel.isResizing || rightPanel.isResizing;
+  const rightSidebar = useResizableWidth({
+    side: "right",
+    storageKey: HOME_RIGHT_SIDEBAR_WIDTH_KEY,
+    defaultWidth: HOME_RIGHT_SIDEBAR_DEFAULT_WIDTH_PX,
+    maxWidth: rightPanelMaxWidth,
+    onRequestCollapse: collapseRightPanel,
+  });
+
+  rightWidthRef.current = rightSidebar.width;
+
+  const isResizingPanels = leftSidebar.isResizing || rightSidebar.isResizing;
 
   const leftPanelSlot = panelRegionProps({
     open: leftPanelOpen,
-    size: leftPanel.width,
-    sizeCssVar: "--home-panel-slot-width",
+    size: leftSidebar.width,
+    sizeCssVar: "--home-left-panel-width",
     fadeEnd: HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
     fadeStart: HOME_SIDEBAR_CONTENT_FADE_START_PX,
   });
 
   const rightPanelSlot = panelRegionProps({
     open: rightPanelOpen,
-    size: rightPanel.width,
-    sizeCssVar: "--home-panel-slot-width",
+    size: rightSidebar.width,
+    sizeCssVar: "--home-right-panel-width",
     fadeEnd: HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
     fadeStart: HOME_SIDEBAR_CONTENT_FADE_START_PX,
   });
@@ -136,8 +119,6 @@ export function HolyGrailLayout() {
       className="home-shell"
       style={
         {
-          "--home-left-panel-width": `${leftPanel.width}px`,
-          "--home-right-panel-width": `${rightPanel.width}px`,
           "--home-topbar-height": `${HOME_TOPBAR_HEIGHT_PX}px`,
           "--home-traffic-lights-inset": `${HOME_MAC_TRAFFIC_LIGHTS_INSET_PX}px`,
         } as CSSProperties
@@ -147,9 +128,9 @@ export function HolyGrailLayout() {
         leftPanelOpen={leftPanelOpen}
         rightPanelOpen={rightPanelOpen}
         footerPanelOpen={footerPanelOpen}
-        onToggleLeftPanel={() => setLeftPanelOpen((open) => !open)}
-        onToggleRightPanel={() => setRightPanelOpen((open) => !open)}
-        onToggleFooterPanel={() => setFooterPanelOpen((open) => !open)}
+        onToggleLeftPanel={toggleLeftPanel}
+        onToggleRightPanel={toggleRightPanel}
+        onToggleFooterPanel={toggleFooterPanel}
       />
 
       <div className="home-shell-body">
@@ -171,7 +152,7 @@ export function HolyGrailLayout() {
                 <span className="home-shell-label">Left Panel</span>
               </div>
               <button
-                {...leftPanel.resizeRailProps}
+                {...leftSidebar.resizeRailProps}
                 tabIndex={leftPanelOpen ? 0 : -1}
               />
             </div>
@@ -197,7 +178,7 @@ export function HolyGrailLayout() {
           >
             <div className="home-shell-panel-surface">
               <button
-                {...rightPanel.resizeRailProps}
+                {...rightSidebar.resizeRailProps}
                 tabIndex={rightPanelOpen ? 0 : -1}
               />
               <div className="home-shell-panel-content">
