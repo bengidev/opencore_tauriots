@@ -41,6 +41,12 @@
   border: 1px solid var(--accent);
 }
 
+.ds-button--compact {
+  min-height: 0;
+  padding: 6px 10px;
+  gap: 6px;
+}
+
 .ds-button:active {
   transform: scale(0.97);
 }
@@ -81,6 +87,26 @@
 .ds-icon-button svg {
   width: 14px;
   height: 14px;
+}
+
+.ds-icon-button--inverted {
+  background-color: var(--text-display);
+  color: var(--black);
+  border-color: var(--text-display);
+}
+
+.ds-icon-button--inverted:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ds-icon-button--inverted:hover,
+  .ds-icon-button--inverted:focus-visible {
+    color: var(--black);
+    border-color: var(--text-display);
+    opacity: 0.82;
+    outline: none;
+  }
 }
 
 .ds-icon-button:active {
@@ -146,6 +172,10 @@
   margin: 0;
 }
 
+.ds-accent-text {
+  color: var(--accent);
+}
+
 .ds-headline {
   font-family: "Space Grotesk", system-ui, sans-serif;
   font-size: var(--heading);
@@ -201,6 +231,15 @@
   font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--text-primary);
+}
+
+.ds-app-title__subtitle {
+  align-self: flex-start;
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: var(--label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 .ds-icon {
