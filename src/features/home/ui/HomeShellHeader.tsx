@@ -46,7 +46,7 @@ export function HomeShellHeader({
 
       <AppTitle
         title="OpenCore"
-        subtitle="Local AI Workspace"
+        subtitle="LOCAL AI WORKSPACE"
         dragRegion
       />
 

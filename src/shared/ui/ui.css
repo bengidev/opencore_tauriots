@@ -170,6 +170,7 @@
   font-size: var(--caption);
   letter-spacing: 0.04em;
   color: var(--text-secondary);
+  margin: 0;
 }
 
 .ds-status {
@@ -188,6 +189,7 @@
 
 .ds-app-title {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
