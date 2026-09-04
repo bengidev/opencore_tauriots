@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { ThemeContext } from "../../../shared/state/themeContext";
 import {
   applyThemeToDocument,
   nextThemeMode,
@@ -69,7 +70,13 @@ export function WelcomeProvider({
   );
 
   return (
-    <WelcomeContext.Provider value={value}>{children}</WelcomeContext.Provider>
+    <WelcomeContext.Provider value={value}>
+      <ThemeContext.Provider
+        value={{ themeMode: preferences.theme_mode, toggleTheme }}
+      >
+        {children}
+      </ThemeContext.Provider>
+    </WelcomeContext.Provider>
   );
 }
 

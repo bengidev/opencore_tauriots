@@ -12,8 +12,8 @@ import {
   applyWelcomeWindowSize,
 } from "../infrastructure/welcomeWindowController";
 import { WelcomeProvider, useWelcome } from "../state/welcomeContext";
+import { HomeRoot } from "../../home";
 import { DevResetFab } from "./DevResetFab";
-import { HomePlaceholder } from "./HomePlaceholder";
 import { WelcomeScreen } from "./WelcomeScreen";
 
 type ActiveScreen = "welcome" | "home";
@@ -66,7 +66,7 @@ function WelcomeApp() {
   return (
     <div className="welcome-root">
       {activeScreen === "home" ? (
-        <HomePlaceholder />
+        <HomeRoot />
       ) : (
         <WelcomeScreen onEnter={handleEnter} />
       )}

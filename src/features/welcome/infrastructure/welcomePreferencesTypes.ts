@@ -6,7 +6,7 @@ export interface AppPreferences {
 }
 
 export const DEFAULT_PREFERENCES: AppPreferences = {
-  theme_mode: "dark",
+  theme_mode: "light",
   onboarding_completed: false,
 };
 

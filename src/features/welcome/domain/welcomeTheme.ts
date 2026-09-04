@@ -2,7 +2,7 @@ export type ThemeMode = "light" | "dark";
 
 export type ForegroundToken = "primary" | "secondary" | "muted" | "accent";
 
-export const DEFAULT_THEME_MODE: ThemeMode = "dark";
+export const DEFAULT_THEME_MODE: ThemeMode = "light";
 
 export const THEME_TRANSITION_MS = 220;
 
