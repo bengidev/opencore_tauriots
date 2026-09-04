@@ -7,17 +7,23 @@ export interface StatusTextProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode;
 }
 
-export function StatusText({ variant, className, children, ...props }: StatusTextProps) {
-  const prefix =
-    variant === "error" ? "[ERROR: " : variant === "loading" ? "[LOADING" : "[";
-  const suffix = variant === "loading" ? "]" : variant === "error" ? "]" : "]";
+function formatStatus(variant: StatusVariant, children: ReactNode): string {
+  if (variant === "error") {
+    return `[ERROR: ${children}]`;
+  }
+  if (variant === "loading") {
+    return "[LOADING]";
+  }
+  return `[${children}]`;
+}
 
+export function StatusText({ variant, className, children, ...props }: StatusTextProps) {
   return (
     <span
       className={["ds-status", `ds-status--${variant}`, className].filter(Boolean).join(" ")}
       {...props}
     >
-      {variant === "error" ? `${prefix}${children}${suffix}` : variant === "loading" ? "[LOADING]" : `[${children}]`}
+      {formatStatus(variant, children)}
     </span>
   );
 }

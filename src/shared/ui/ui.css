@@ -20,8 +20,8 @@
 }
 
 .ds-button--primary {
-  background-color: var(--text-display);
-  color: var(--black);
+  background-color: var(--cta-bg);
+  color: var(--cta-text);
 }
 
 .ds-button--secondary {
@@ -52,8 +52,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .ds-button:hover {
+  .ds-button:hover,
+  .ds-button:focus-visible {
     opacity: 0.82;
+    outline: none;
   }
 }
 
@@ -191,7 +193,7 @@
   font-size: var(--body-sm);
   line-height: 1.55;
   color: var(--text-primary);
-  opacity: 0.72;
+  opacity: 0.9;
   margin: 0;
 }
 

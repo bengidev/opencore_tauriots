@@ -1,11 +1,10 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { type ThemeMode } from "../../../shared/theme/theme";
+import { Button } from "../../../shared/ui/Button";
 
 const DRAG_THRESHOLD_PX = 5;
 const VIEWPORT_MARGIN_PX = 12;
 
 export interface DevResetFabProps {
-  mode: ThemeMode;
   onReset: () => void | Promise<void>;
 }
 
@@ -47,11 +46,10 @@ function readPositionBounds(el: HTMLElement): { width: number; height: number } 
   return { width: window.innerWidth, height: window.innerHeight };
 }
 
-export function DevResetFab({ mode, onReset }: DevResetFabProps) {
-  void mode;
-
+export function DevResetFab({ onReset }: DevResetFabProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
+  const suppressClickRef = useRef(false);
   const [position, setPosition] = useState<{ left: number; top: number } | null>(
     null,
   );
@@ -102,6 +100,7 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
   ) => {
     if (event.button !== 0) return;
     event.preventDefault();
+    suppressClickRef.current = false;
     const { left, top } = readPosition();
     if (!position) setPosition({ left, top });
     dragRef.current = {
@@ -124,6 +123,7 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
     if (!drag.dragging) {
       if (Math.hypot(deltaX, deltaY) < DRAG_THRESHOLD_PX) return;
       drag.dragging = true;
+      suppressClickRef.current = true;
       setIsDragging(true);
     }
     setPosition(clampPosition(drag.originLeft + deltaX, drag.originTop + deltaY));
@@ -134,20 +134,18 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
   ) => {
     const drag = dragRef.current;
     if (!drag || drag.pointerId !== event.pointerId) return;
-    const wasDragging = drag.dragging;
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture?.(event.pointerId);
     }
     dragRef.current = null;
     setIsDragging(false);
-    if (!wasDragging) {
-      void onReset();
-    }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
+  const handleReset = () => {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
     void onReset();
   };
 
@@ -156,9 +154,6 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
       ref={containerRef}
       className={[
         "welcome-dev-reset-fab",
-        "ds-button",
-        "ds-button--secondary",
-        "ds-button--compact",
         position ? "" : "welcome-dev-reset-fab-default",
         isDragging ? "is-dragging" : "",
       ].join(" ")}
@@ -174,13 +169,16 @@ export function DevResetFab({ mode, onReset }: DevResetFabProps) {
       onPointerMove={handlePointerMove}
       onPointerUp={finishPointerInteraction}
       onPointerCancel={finishPointerInteraction}
-      onKeyDown={handleKeyDown}
       onDragStart={(event) => event.preventDefault()}
-      role="button"
-      tabIndex={0}
-      aria-label="Reset onboarding (development only)"
     >
-      RESET
+      <Button
+        variant="secondary"
+        className="ds-button--compact"
+        onClick={handleReset}
+        aria-label="Reset onboarding (development only)"
+      >
+        RESET
+      </Button>
     </div>
   );
 }
