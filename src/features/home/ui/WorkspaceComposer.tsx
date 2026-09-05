@@ -1,5 +1,7 @@
 import {
   type KeyboardEvent,
+  type ReactNode,
+  type RefObject,
   useCallback,
   useEffect,
   useId,
@@ -15,6 +17,7 @@ const PRIORITY_OPTIONS = ["High", "Normal"] as const;
 const MODE_OPTIONS = ["Build", "Plan", "Ask"] as const;
 const ACCESS_OPTIONS = ["Full access", "Read only", "Ask before edits"] as const;
 
+/** Placeholder until real context tracking is wired. */
 const DEFAULT_CONTEXT_PERCENT = 85;
 
 type ComposerField = "model" | "priority" | "mode" | "access";
@@ -120,7 +123,9 @@ interface ComposerDropdownProps {
   section: string;
   options: readonly string[];
   value: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onSelect: (value: string) => void;
 }
 
@@ -131,45 +136,108 @@ function ComposerDropdown({
   options,
   value,
   icon,
+  open,
+  onOpenChange,
   onSelect,
 }: ComposerDropdownProps) {
-  const [open, setOpen] = useState(false);
+  const listboxId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (!open) {
       return;
     }
 
+    const selectedIndex = options.indexOf(value);
+    setActiveIndex(selectedIndex >= 0 ? selectedIndex : 0);
+
     function handlePointerDown(event: MouseEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-
-    function handleKeyDown(event: globalThis.KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
+        onOpenChange(false);
       }
     }
 
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, [open, onOpenChange, options, value]);
+
+  useEffect(() => {
+    if (open) {
+      optionRefs.current[activeIndex]?.focus();
+    }
+  }, [open, activeIndex]);
+
+  const handleTriggerKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLButtonElement>) => {
+      if (
+        event.key === "ArrowDown" ||
+        event.key === "Enter" ||
+        event.key === " "
+      ) {
+        event.preventDefault();
+        onOpenChange(true);
+      }
+    },
+    [onOpenChange],
+  );
+
+  const handleMenuKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      switch (event.key) {
+        case "ArrowDown":
+          event.preventDefault();
+          setActiveIndex((current) => (current + 1) % options.length);
+          break;
+        case "ArrowUp":
+          event.preventDefault();
+          setActiveIndex(
+            (current) => (current - 1 + options.length) % options.length,
+          );
+          break;
+        case "Home":
+          event.preventDefault();
+          setActiveIndex(0);
+          break;
+        case "End":
+          event.preventDefault();
+          setActiveIndex(options.length - 1);
+          break;
+        case "Enter":
+        case " ":
+          event.preventDefault();
+          onSelect(options[activeIndex]);
+          onOpenChange(false);
+          triggerRef.current?.focus();
+          break;
+        case "Escape":
+          event.preventDefault();
+          onOpenChange(false);
+          triggerRef.current?.focus();
+          break;
+        default:
+          break;
+      }
+    },
+    [activeIndex, onOpenChange, onSelect, options],
+  );
 
   return (
     <div className="home-workspace-composer-dropdown" ref={rootRef}>
       <button
+        ref={triggerRef}
         type="button"
         id={id}
         className="home-workspace-composer-toolbar-btn"
         aria-haspopup="listbox"
         aria-expanded={open}
-        onClick={() => setOpen((current) => !current)}
+        aria-controls={open ? listboxId : undefined}
+        onClick={() => onOpenChange(!open)}
+        onKeyDown={handleTriggerKeyDown}
       >
         {icon ? (
           <span className="home-workspace-composer-toolbar-icon">{icon}</span>
@@ -182,21 +250,29 @@ function ComposerDropdown({
 
       {open ? (
         <div
+          id={listboxId}
           className="home-workspace-composer-menu"
           role="listbox"
           aria-label={section}
+          tabIndex={-1}
+          onKeyDown={handleMenuKeyDown}
         >
           <p className="home-workspace-composer-menu-heading">{section}</p>
-          {options.map((option) => (
+          {options.map((option, index) => (
             <button
               key={option}
+              ref={(element) => {
+                optionRefs.current[index] = element;
+              }}
               type="button"
               role="option"
+              tabIndex={-1}
               aria-selected={option === value}
               className="home-workspace-composer-menu-item"
               onClick={() => {
                 onSelect(option);
-                setOpen(false);
+                onOpenChange(false);
+                triggerRef.current?.focus();
               }}
             >
               {option}
@@ -221,11 +297,17 @@ function resizeComposer(textarea: HTMLTextAreaElement) {
   textarea.style.height = `${nextHeight}px`;
 }
 
-export function WorkspaceComposer() {
+export interface WorkspaceComposerProps {
+  textareaRef?: RefObject<HTMLTextAreaElement | null>;
+}
+
+export function WorkspaceComposer({ textareaRef }: WorkspaceComposerProps = {}) {
   const textareaId = useId();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const resolvedTextareaRef = textareaRef ?? internalTextareaRef;
   const [draft, setDraft] = useState("");
   const [composer, setComposer] = useState(DEFAULT_COMPOSER_STATE);
+  const [openDropdown, setOpenDropdown] = useState<ComposerField | null>(null);
 
   const selectOption = useCallback((field: ComposerField, value: string) => {
     setComposer((current) => ({ ...current, [field]: value }));
@@ -236,15 +318,15 @@ export function WorkspaceComposer() {
       return;
     }
     setDraft("");
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      resizeComposer(textareaRef.current);
+    if (resolvedTextareaRef.current) {
+      resolvedTextareaRef.current.style.height = "auto";
+      resizeComposer(resolvedTextareaRef.current);
     }
-  }, [draft]);
+  }, [draft, resolvedTextareaRef]);
 
   const focusComposer = useCallback(() => {
-    textareaRef.current?.focus();
-  }, []);
+    resolvedTextareaRef.current?.focus();
+  }, [resolvedTextareaRef]);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -256,18 +338,23 @@ export function WorkspaceComposer() {
     [submitComposer],
   );
 
-  const handleChange = useCallback((value: string) => {
-    setDraft(value);
-    if (textareaRef.current) {
-      resizeComposer(textareaRef.current);
-    }
-  }, []);
+  const handleChange = useCallback(
+    (value: string) => {
+      setDraft(value);
+      if (resolvedTextareaRef.current) {
+        resizeComposer(resolvedTextareaRef.current);
+      }
+    },
+    [resolvedTextareaRef],
+  );
 
   useEffect(() => {
-    if (textareaRef.current) {
-      resizeComposer(textareaRef.current);
+    if (resolvedTextareaRef.current) {
+      resizeComposer(resolvedTextareaRef.current);
     }
-  }, []);
+  }, [resolvedTextareaRef]);
+
+  const canSend = draft.trim().length > 0;
 
   return (
     <div className="home-workspace-composer">
@@ -277,7 +364,7 @@ export function WorkspaceComposer() {
           onClick={focusComposer}
         >
           <textarea
-            ref={textareaRef}
+            ref={resolvedTextareaRef}
             id={textareaId}
             className="home-workspace-composer-input"
             rows={COMPOSER_MIN_ROWS}
@@ -294,10 +381,14 @@ export function WorkspaceComposer() {
           <ComposerDropdown
             id="workspace-composer-model"
             label={composer.model}
-            section="API key"
+            section="Model"
             options={MODEL_OPTIONS}
             value={composer.model}
             icon={<CpuIcon />}
+            open={openDropdown === "model"}
+            onOpenChange={(nextOpen) =>
+              setOpenDropdown(nextOpen ? "model" : null)
+            }
             onSelect={(value) => selectOption("model", value)}
           />
           <div className="home-workspace-composer-toolbar-sep" aria-hidden="true" />
@@ -307,6 +398,10 @@ export function WorkspaceComposer() {
             section="Priority"
             options={PRIORITY_OPTIONS}
             value={composer.priority}
+            open={openDropdown === "priority"}
+            onOpenChange={(nextOpen) =>
+              setOpenDropdown(nextOpen ? "priority" : null)
+            }
             onSelect={(value) => selectOption("priority", value)}
           />
           <div className="home-workspace-composer-toolbar-sep" aria-hidden="true" />
@@ -317,6 +412,10 @@ export function WorkspaceComposer() {
             options={MODE_OPTIONS}
             value={composer.mode}
             icon={<BotIcon />}
+            open={openDropdown === "mode"}
+            onOpenChange={(nextOpen) =>
+              setOpenDropdown(nextOpen ? "mode" : null)
+            }
             onSelect={(value) => selectOption("mode", value)}
           />
           <div className="home-workspace-composer-toolbar-sep" aria-hidden="true" />
@@ -327,6 +426,10 @@ export function WorkspaceComposer() {
             options={ACCESS_OPTIONS}
             value={composer.access}
             icon={<EyeIcon />}
+            open={openDropdown === "access"}
+            onOpenChange={(nextOpen) =>
+              setOpenDropdown(nextOpen ? "access" : null)
+            }
             onSelect={(value) => selectOption("access", value)}
           />
 
@@ -344,6 +447,7 @@ export function WorkspaceComposer() {
               type="button"
               className="home-workspace-composer-send"
               aria-label="Send atom"
+              disabled={!canSend}
               onClick={submitComposer}
             >
               <ArrowUpIcon />
@@ -353,7 +457,7 @@ export function WorkspaceComposer() {
       </div>
 
       <p className="home-workspace-composer-hint">
-        Enter to send atom · Shift+Enter for newline · ⌘K for commands
+        Enter to send atom · Shift+Enter for newline
       </p>
     </div>
   );
