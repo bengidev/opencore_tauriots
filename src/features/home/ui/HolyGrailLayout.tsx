@@ -116,6 +116,14 @@ export function HolyGrailLayout() {
     fadeStart: HOME_SIDEBAR_CONTENT_FADE_START_PX,
   });
 
+  const footerPanelSlot = panelRegionProps({
+    open: footerPanelOpen,
+    size: HOME_TOPBAR_HEIGHT_PX,
+    sizeCssVar: "--home-footer-panel-height",
+    fadeEnd: 0,
+    fadeStart: 0,
+  });
+
   return (
     <div
       className="home-shell"
@@ -194,6 +202,8 @@ export function HolyGrailLayout() {
       <div
         className="home-shell-footer-slot"
         data-state={panelState(footerPanelOpen)}
+        data-content-hidden={footerPanelSlot["data-content-hidden"]}
+        style={footerPanelSlot.style}
       >
         <footer
           className="home-shell-footer"
