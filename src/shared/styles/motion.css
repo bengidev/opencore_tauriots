@@ -1,12 +1,15 @@
 :root {
   --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
   --duration-fast: 150ms;
   --duration-theme: 220ms;
+  --duration-enter: 280ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 0ms;
     --duration-theme: 0ms;
+    --duration-enter: 0ms;
   }
 }
