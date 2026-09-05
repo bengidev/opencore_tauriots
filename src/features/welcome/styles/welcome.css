@@ -1,10 +1,8 @@
-:root {
-  --welcome-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .welcome-enter {
-    transition-duration: 0ms;
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 
@@ -112,29 +110,41 @@
 }
 
 .welcome-enter {
+  --welcome-enter-delay: 0ms;
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(8px) scale(0.97);
   transition:
-    opacity 500ms var(--welcome-ease-out),
-    transform 500ms var(--welcome-ease-out);
+    opacity var(--duration-enter) var(--ease-out-strong) var(--welcome-enter-delay),
+    transform var(--duration-enter) var(--ease-out-strong) var(--welcome-enter-delay);
 }
 
-.welcome-screen[data-ready="true"] .welcome-enter-1 {
-  opacity: 1;
-  transform: none;
-  transition-delay: 0.05s;
+.welcome-enter-1 {
+  --welcome-enter-delay: 0ms;
 }
 
-.welcome-screen[data-ready="true"] .welcome-enter-2 {
-  opacity: 1;
-  transform: none;
-  transition-delay: 0.12s;
+.welcome-enter-2 {
+  --welcome-enter-delay: 60ms;
 }
 
-.welcome-screen[data-ready="true"] .welcome-enter-3 {
+.welcome-enter-3 {
+  --welcome-enter-delay: 120ms;
+}
+
+.welcome-enter-4 {
+  --welcome-enter-delay: 180ms;
+}
+
+.welcome-enter-5 {
+  --welcome-enter-delay: 240ms;
+}
+
+.welcome-enter-6 {
+  --welcome-enter-delay: 300ms;
+}
+
+.welcome-screen[data-ready="true"] .welcome-enter {
   opacity: 1;
   transform: none;
-  transition-delay: 0.2s;
 }
 
 .welcome-boot-placeholder {
