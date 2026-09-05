@@ -12,6 +12,8 @@ export { Headline } from "./Headline";
 export { Body } from "./Body";
 export { Caption } from "./Caption";
 export { StatusText } from "./StatusText";
+export { Snackbar } from "./Snackbar";
+export type { SnackbarProps } from "./Snackbar";
 export { AppTitle } from "./AppTitle";
 export { ThemeToggleButton } from "./ThemeToggleButton";
 export { SunIcon } from "./icons/SunIcon";

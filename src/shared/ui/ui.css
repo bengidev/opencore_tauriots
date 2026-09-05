@@ -249,3 +249,48 @@
   height: 14px;
   flex-shrink: 0;
 }
+
+.ds-snackbar-host {
+  pointer-events: none;
+}
+
+.ds-snackbar {
+  display: block;
+  box-sizing: border-box;
+  padding: 0.625rem var(--space-md);
+  border: 1px solid var(--border-visible);
+  border-left: 2px solid var(--text-secondary);
+  background-color: color-mix(in srgb, var(--surface) 90%, var(--text-display));
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--black) 24%, transparent);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--body-sm);
+  line-height: 1.4;
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition:
+    opacity 220ms var(--ease-out-strong),
+    transform 220ms var(--ease-out-strong);
+}
+
+.ds-snackbar[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.ds-snackbar[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transition-duration: 140ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-snackbar {
+    transform: none;
+    transition: opacity 140ms var(--ease-out-strong);
+  }
+
+  .ds-snackbar[data-visible="false"] {
+    transform: none;
+  }
+}
