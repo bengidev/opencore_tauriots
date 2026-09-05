@@ -42,8 +42,15 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
   }, [onEnter]);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setReady(true));
-    return () => window.cancelAnimationFrame(frame);
+    let outer = 0;
+    let inner = 0;
+    outer = window.requestAnimationFrame(() => {
+      inner = window.requestAnimationFrame(() => setReady(true));
+    });
+    return () => {
+      window.cancelAnimationFrame(outer);
+      window.cancelAnimationFrame(inner);
+    };
   }, []);
 
   useEffect(() => {
@@ -87,9 +94,9 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
           <ThemeToggleButton showLabel />
         </header>
 
-        <section className="welcome-hero-section welcome-enter welcome-enter-2">
+        <section className="welcome-hero-section">
           <div
-            className="welcome-hero-wrap"
+            className="welcome-hero-wrap welcome-enter welcome-enter-2"
             style={{ width: canvasSize, height: canvasSize }}
           >
             <WelcomeCubeHeroCanvas
@@ -99,11 +106,11 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
             />
           </div>
           <div className="welcome-copy-block">
-            <Display>
+            <Display className="welcome-enter welcome-enter-3">
               Your local <span className="ds-accent-text">AI</span> command
               workspace
             </Display>
-            <Body>
+            <Body className="welcome-enter welcome-enter-4">
               OpenCore combines chat, terminal, editing, and Rust-native
               performance in one permissioned desktop environment. To leave the
               crowded cloud, polluted by leaks and unconsciousness, to return to
@@ -112,13 +119,19 @@ export function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
           </div>
         </section>
 
-        <footer className="welcome-footer welcome-enter welcome-enter-3">
+        <footer className="welcome-footer">
           {persistenceError ? (
-            <StatusText variant="error">{persistenceError}</StatusText>
+            <StatusText variant="error" className="welcome-enter welcome-enter-5">
+              {persistenceError}
+            </StatusText>
           ) : (
-            <Caption>Press Enter</Caption>
+            <Caption className="welcome-enter welcome-enter-5">Press Enter</Caption>
           )}
-          <Button variant="primary" onClick={handleEnter}>
+          <Button
+            variant="primary"
+            className="welcome-enter welcome-enter-6"
+            onClick={handleEnter}
+          >
             Enter OpenCore
           </Button>
         </footer>
