@@ -20,6 +20,7 @@ import { usePersistedPanelOpen } from "../hooks/usePersistedPanelOpen";
 import { useResizableWidth } from "../hooks/useResizableWidth";
 import { Label } from "../../../shared/ui";
 import { HomeShellHeader } from "./HomeShellHeader";
+import { MainWorkspacePanel } from "./MainWorkspacePanel";
 
 function subscribeToViewportWidth(onStoreChange: () => void): () => void {
   window.addEventListener("resize", onStoreChange);
@@ -161,7 +162,7 @@ export function HolyGrailLayout() {
         </div>
 
         <main className="home-shell-main">
-          <Label>Main Panel</Label>
+          <MainWorkspacePanel />
         </main>
 
         <div

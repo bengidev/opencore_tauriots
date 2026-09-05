@@ -188,13 +188,10 @@
 .home-shell-main {
   grid-area: main;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-width: 0;
   min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding: 1rem;
+  overflow: hidden;
 }
 
 .home-shell-footer-slot {
