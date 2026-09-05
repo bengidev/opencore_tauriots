@@ -1,15 +1,24 @@
 import { describe, expect, it } from "vitest";
 import {
+  clearHomeLayoutPersistence,
+  HOME_FOOTER_PANEL_OPEN_KEY,
+  HOME_LEFT_PANEL_OPEN_KEY,
+  HOME_LEFT_SIDEBAR_DEFAULT_WIDTH_PX,
+  HOME_LEFT_SIDEBAR_WIDTH_KEY,
   HOME_MAIN_MIN_WIDTH_PX,
+  HOME_RIGHT_PANEL_OPEN_KEY,
+  HOME_RIGHT_SIDEBAR_WIDTH_KEY,
   HOME_SIDEBAR_COLLAPSE_THRESHOLD_PX,
   isPanelContentHidden,
   panelContentOpacity,
   readStoredPanelOpen,
+  readStoredSidebarWidth,
   resolveResizeEndAction,
   reservedSidebarWidth,
   shouldCollapsePanelSize,
   sidebarMaxWidth,
   writeStoredPanelOpen,
+  writeStoredSidebarWidth,
 } from "./homeLayoutConstants";
 import { panelRegionProps } from "./panelRegionProps";
 
@@ -106,5 +115,26 @@ describe("homeLayoutConstants", () => {
     writeStoredPanelOpen("opencore:test-panel-open", true);
     expect(readStoredPanelOpen("opencore:test-panel-open", false)).toBe(true);
     window.localStorage.removeItem("opencore:test-panel-open");
+  });
+
+  it("clears persisted home layout state", () => {
+    writeStoredSidebarWidth(HOME_LEFT_SIDEBAR_WIDTH_KEY, 206);
+    writeStoredSidebarWidth(HOME_RIGHT_SIDEBAR_WIDTH_KEY, 230);
+    writeStoredPanelOpen(HOME_LEFT_PANEL_OPEN_KEY, false);
+    writeStoredPanelOpen(HOME_RIGHT_PANEL_OPEN_KEY, false);
+    writeStoredPanelOpen(HOME_FOOTER_PANEL_OPEN_KEY, false);
+
+    clearHomeLayoutPersistence();
+
+    expect(
+      readStoredSidebarWidth(
+        HOME_LEFT_SIDEBAR_WIDTH_KEY,
+        HOME_LEFT_SIDEBAR_DEFAULT_WIDTH_PX,
+      ),
+    ).toBe(HOME_LEFT_SIDEBAR_DEFAULT_WIDTH_PX);
+    expect(readStoredSidebarWidth(HOME_RIGHT_SIDEBAR_WIDTH_KEY, 280)).toBe(280);
+    expect(readStoredPanelOpen(HOME_LEFT_PANEL_OPEN_KEY, true)).toBe(true);
+    expect(readStoredPanelOpen(HOME_RIGHT_PANEL_OPEN_KEY, true)).toBe(true);
+    expect(readStoredPanelOpen(HOME_FOOTER_PANEL_OPEN_KEY, true)).toBe(true);
   });
 });

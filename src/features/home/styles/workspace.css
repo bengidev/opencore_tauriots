@@ -1,0 +1,407 @@
+.home-workspace {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background-color: var(--black);
+}
+
+.home-workspace-stage {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: var(--space-lg);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.home-workspace-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 26.25rem;
+}
+
+.home-workspace-empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: 1.75rem var(--space-lg);
+  border: 1px solid var(--border-visible);
+  background-color: var(--surface);
+  text-align: center;
+}
+
+.home-workspace-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border-visible);
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--text-display);
+}
+
+.home-workspace-empty-headline {
+  margin: 0;
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: var(--body-sm);
+  line-height: 1.3;
+  color: var(--text-display);
+}
+
+.home-workspace-empty-body {
+  margin: 0;
+  max-width: 20rem;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--body-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.home-workspace-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.home-workspace-quick-action.ds-button {
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  transition:
+    transform var(--duration-fast) var(--ease-out-strong),
+    background-color var(--duration-fast) var(--ease-out-strong),
+    border-color var(--duration-fast) var(--ease-out-strong),
+    color var(--duration-fast) var(--ease-out-strong);
+}
+
+.home-workspace-quick-action.ds-button:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-workspace-quick-action.ds-button:hover,
+  .home-workspace-quick-action.ds-button:focus-visible {
+    background-color: var(--surface);
+    border-color: var(--border-visible);
+    color: var(--text-display);
+    opacity: 1;
+    outline: none;
+  }
+}
+
+.home-workspace-snackbar {
+  position: absolute;
+  bottom: 7.5rem;
+  left: 50%;
+  z-index: 6;
+  width: max-content;
+  max-width: min(22rem, calc(100% - 2 * var(--space-lg)));
+  transform: translateX(-50%);
+}
+
+.home-workspace-composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.home-workspace-composer-shell {
+  --home-composer-inline-pad: var(--space-md);
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+}
+
+.home-workspace-composer-input-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 4.5rem;
+  padding: var(--space-md) var(--home-composer-inline-pad) var(--space-xs);
+  cursor: text;
+}
+
+.home-workspace-composer-input {
+  display: block;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 4.5rem;
+  max-height: 9rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  resize: none;
+  overflow-y: auto;
+  background: transparent;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--body);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.home-workspace-composer-input::placeholder {
+  color: var(--text-disabled);
+}
+
+.home-workspace-composer-input:focus {
+  outline: none;
+}
+
+.home-workspace-composer-divider {
+  height: 1px;
+  background-color: var(--border);
+}
+
+.home-workspace-composer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding: 4px var(--home-composer-inline-pad);
+}
+
+.home-workspace-composer-toolbar-spacer {
+  flex: 1;
+  min-width: var(--space-sm);
+}
+
+.home-workspace-composer-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 2rem;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--body-sm);
+  line-height: 1.2;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: opacity var(--duration-fast) var(--ease-out-strong);
+}
+
+.home-workspace-composer-toolbar-btn:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-workspace-composer-toolbar-btn:hover,
+  .home-workspace-composer-toolbar-btn:focus-visible {
+    opacity: 0.82;
+    outline: none;
+  }
+}
+
+.home-workspace-composer-toolbar-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.home-workspace-composer-toolbar-icon svg,
+.home-workspace-composer-toolbar-caret svg {
+  width: 14px;
+  height: 14px;
+}
+
+.home-workspace-composer-toolbar-label {
+  white-space: nowrap;
+}
+
+.home-workspace-composer-toolbar-caret {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.home-workspace-composer-toolbar-sep {
+  flex-shrink: 0;
+  width: 1px;
+  height: 1.125rem;
+  margin-inline: var(--space-xs);
+  background-color: color-mix(in srgb, var(--border-visible) 75%, transparent);
+}
+
+.home-workspace-composer-dropdown {
+  position: relative;
+}
+
+.home-workspace-composer-menu {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  min-width: 11rem;
+  padding: var(--space-xs) 0;
+  border: 1px solid var(--border-visible);
+  background-color: var(--surface);
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(0.97);
+  transform-origin: bottom left;
+  transition:
+    opacity 160ms var(--ease-out-strong),
+    transform 160ms var(--ease-out-strong);
+
+  @starting-style {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0) scale(0.97);
+  }
+}
+
+.home-workspace-composer-menu-heading {
+  margin: 0;
+  padding: var(--space-xs) var(--space-md);
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-disabled);
+}
+
+.home-workspace-composer-menu-item {
+  display: block;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: var(--body-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out-strong);
+}
+
+.home-workspace-composer-menu-item[aria-selected="true"] {
+  color: var(--text-display);
+  background-color: var(--surface-raised);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-workspace-composer-menu-item:hover,
+  .home-workspace-composer-menu-item:focus-visible {
+    background-color: var(--surface-raised);
+    outline: none;
+  }
+}
+
+.home-workspace-composer-actions {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.home-workspace-composer-context {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2rem;
+  border: 1px solid var(--border-visible);
+  background-color: var(--surface);
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.home-workspace-composer-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--border-visible);
+  background-color: var(--cta-bg);
+  color: var(--cta-text);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out-strong);
+}
+
+.home-workspace-composer-send svg {
+  width: 16px;
+  height: 16px;
+}
+
+.home-workspace-composer-send:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.home-workspace-composer-send:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-workspace-composer-send:hover:not(:disabled),
+  .home-workspace-composer-send:focus-visible:not(:disabled) {
+    opacity: 0.88;
+    outline: none;
+  }
+}
+
+.home-workspace-composer-hint {
+  margin: 0;
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-workspace-composer-toolbar-btn,
+  .home-workspace-composer-send,
+  .home-workspace-composer-menu,
+  .home-workspace-composer-menu-item,
+  .home-workspace-quick-action.ds-button {
+    transition: none;
+  }
+
+  .home-workspace-composer-menu {
+    transform: none;
+
+    @starting-style {
+      transform: none;
+    }
+  }
+}
