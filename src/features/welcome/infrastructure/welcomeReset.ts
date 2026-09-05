@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { clearHomeLayoutPersistence } from "../../home/domain/homeLayoutConstants";
 import {
   DEFAULT_PREFERENCES,
   MEMORY_PREFERENCES_KEY,
@@ -8,6 +9,8 @@ import { applyThemeToDocument } from "../../../shared/theme/theme";
 
 export async function resetAllPersistedData(): Promise<AppPreferences> {
   const defaults: AppPreferences = { ...DEFAULT_PREFERENCES };
+
+  clearHomeLayoutPersistence();
 
   if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
     try {

@@ -21,6 +21,28 @@ export const HOME_LEFT_PANEL_OPEN_KEY = "opencore:home:left-panel-open";
 export const HOME_RIGHT_PANEL_OPEN_KEY = "opencore:home:right-panel-open";
 export const HOME_FOOTER_PANEL_OPEN_KEY = "opencore:home:footer-panel-open";
 
+export const HOME_LAYOUT_STORAGE_KEYS = [
+  HOME_LEFT_SIDEBAR_WIDTH_KEY,
+  HOME_RIGHT_SIDEBAR_WIDTH_KEY,
+  HOME_LEFT_PANEL_OPEN_KEY,
+  HOME_RIGHT_PANEL_OPEN_KEY,
+  HOME_FOOTER_PANEL_OPEN_KEY,
+] as const;
+
+export function clearHomeLayoutPersistence(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  for (const key of HOME_LAYOUT_STORAGE_KEYS) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // Ignore quota or privacy errors.
+    }
+  }
+}
+
 export function clampWidth(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
